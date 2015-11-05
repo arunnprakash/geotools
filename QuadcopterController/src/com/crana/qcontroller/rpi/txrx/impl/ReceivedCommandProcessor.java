@@ -49,7 +49,7 @@ public class ReceivedCommandProcessor extends Thread {
 				break;
 			}
 			default: {
-				throw new IllegalArgumentException("No Implmentation found in ReceivedCommandProcessor with Command::"+command.name());
+				throw new IllegalArgumentException("No Implementation found in ReceivedCommandProcessor with Command::"+command.name());
 			}
 		}
 	}
