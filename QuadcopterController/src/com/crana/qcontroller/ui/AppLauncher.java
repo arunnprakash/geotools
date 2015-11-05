@@ -1,0 +1,187 @@
+package com.crana.qcontroller.ui;
+
+import java.awt.Cursor;
+import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Properties;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.border.EmptyBorder;
+
+import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_ID_KEY;
+import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_LOCOMOTION_TYPE_KEY;
+import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_NAME_KEY;
+
+import com.crana.qcontroller.domain.DeviceConfig;
+import com.crana.qcontroller.domain.DeviceLocomotionType;
+import com.crana.qcontroller.service.Command;
+import com.crana.qcontroller.service.txrx.Receiver;
+import com.crana.qcontroller.service.txrx.Transmitter;
+import com.crana.qcontroller.service.txrx.impl.DefaultReceiver;
+import com.crana.qcontroller.service.txrx.impl.DefaultTransmitter;
+
+import javax.swing.SwingConstants;
+
+public class AppLauncher extends JFrame {
+
+	private JPanel contentPane;
+	private JProgressBar progressBar;
+	private JLabel statusLabel;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		final AppLauncher appLauncer = new AppLauncher();
+		appLauncer.setVisible(true);
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					appLauncer.setStatus("Loading My Device Configuration...");
+					DeviceConfig myDeviceConfig = loadMyDeviceConfig();
+					appLauncer.setStatus("Loading QuadCopter Controller Window...");
+					QControllerMainWindow window = createQControllerMainWindow(myDeviceConfig);
+					appLauncer.setProgress(30);
+					appLauncer.setStatus("Initialize Transmitter...");
+					Transmitter transmitter = initTransmitter(window, myDeviceConfig);
+					waitForTransmitterIsToReady(transmitter);
+					appLauncer.setProgress(50);
+					appLauncer.setStatus("Initialize Receiver...");
+					Receiver receiver = initReceiver(window, myDeviceConfig);
+					waitForReceiverIsToReady(receiver);
+					appLauncer.setProgress(70);
+					appLauncer.setStatus("BroadCasting My Device Configuration");
+					broadCastMyDeviceConfig(transmitter);
+					appLauncer.setProgress(90);
+					window.getMainWindowFrame().setVisible(true);
+					appLauncer.setProgress(100);
+					appLauncer.setVisible(false);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			private void broadCastMyDeviceConfig(Transmitter transmitter) {
+				transmitter.transmit(Command.INVITE);
+			}
+
+			private void waitForReceiverIsToReady(Receiver receiver) throws Exception {
+				while (!receiver.isReady()) {
+					Thread.sleep(1000);
+				}
+			}
+			private void waitForTransmitterIsToReady(Transmitter transmitter) throws Exception {
+				while (!transmitter.isReady()) {
+					Thread.sleep(1000);
+				}
+			}
+			private DeviceConfig loadMyDeviceConfig() throws Exception {
+				DeviceConfig myDeviceConfig = new DeviceConfig();
+				InputStream is = null;
+				File myDeviceConfigPropertyFile = new File(System.getProperty("user.home") + "\\my_device_default_config.properties");
+				if (myDeviceConfigPropertyFile.exists()) {
+					is = new FileInputStream(myDeviceConfigPropertyFile);
+				} else {
+					is = AppLauncher.class.getResourceAsStream("/com/crana/qcontroller/resources/my_device_default_config.properties");
+				}
+				Properties props = new Properties();
+				props.load(is);
+				myDeviceConfig.setDeviceName(props.getProperty(DEVICE_NAME_KEY));
+				myDeviceConfig.setDeviceId(props.getProperty(DEVICE_ID_KEY));
+				myDeviceConfig.setLocomotionType(DeviceLocomotionType.valueOf(props.getProperty(DEVICE_LOCOMOTION_TYPE_KEY)));
+				is.close();
+				return myDeviceConfig;
+			}
+			private QControllerMainWindow createQControllerMainWindow(DeviceConfig myDeviceConfig) throws Exception {
+				return new QControllerMainWindow(myDeviceConfig);
+			}
+			private Transmitter initTransmitter(QControllerMainWindow window, DeviceConfig myDeviceConfig) {
+				Transmitter transmitter = new DefaultTransmitter(myDeviceConfig, window.getTxRxLogger().getTxMessageLogger());
+				transmitter.startTransmitter();
+				window.setTransmitter(transmitter);
+				return transmitter;
+			}
+			private Receiver initReceiver(QControllerMainWindow window, DeviceConfig myDeviceConfig) {
+				Receiver receiver = new DefaultReceiver(myDeviceConfig, window);
+				receiver.startReceiver();
+				return receiver;
+			}
+		});
+	}
+
+	protected void setStatus(String statusMessage) {
+		statusLabel.setText(statusMessage);
+		this.update(this.getGraphics());
+	}
+
+	protected void setProgress(int progress) {
+		progressBar.setValue(progress);
+		progressBar.update(progressBar.getGraphics());
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public AppLauncher() {
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(500, 250);
+		setLocationRelativeTo(null);
+		setUndecorated(true);
+		setAlwaysOnTop(true);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		GridBagLayout gbl_contentPane = new GridBagLayout();
+		gbl_contentPane.columnWidths = new int[] {0};
+		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0};
+		gbl_contentPane.columnWeights = new double[]{0.0};
+		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+		contentPane.setLayout(gbl_contentPane);
+		
+		statusLabel = new JLabel("");
+		statusLabel.setVerticalAlignment(SwingConstants.TOP);
+		GridBagConstraints gbc_statusLabel = new GridBagConstraints();
+		gbc_statusLabel.insets = new Insets(0, 0, 5, 0);
+		gbc_statusLabel.weighty = 1.0;
+		gbc_statusLabel.weightx = 1.0;
+		gbc_statusLabel.fill = GridBagConstraints.BOTH;
+		gbc_statusLabel.gridx = 0;
+		gbc_statusLabel.gridy = 0;
+		contentPane.add(statusLabel, gbc_statusLabel);
+		
+		progressBar = new JProgressBar();
+		progressBar.setValue(0);
+		progressBar.setStringPainted(true);
+		progressBar.setMaximum(100);
+		GridBagConstraints gbc_progressBar = new GridBagConstraints();
+		gbc_progressBar.insets = new Insets(0, 2, 5, 2);
+		gbc_progressBar.fill = GridBagConstraints.HORIZONTAL;
+		gbc_progressBar.gridx = 0;
+		gbc_progressBar.gridy = 1;
+		contentPane.add(progressBar, gbc_progressBar);
+		
+		JLabel imageLabel = new JLabel("");
+		imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		imageLabel.setIcon(new ImageIcon(AppLauncher.class.getResource("/com/crana/qcontroller/resources/images/DRONE_small.jpg")));
+		GridBagConstraints gbc_imageLabel = new GridBagConstraints();
+		gbc_imageLabel.weighty = 1.0;
+		gbc_imageLabel.weightx = 1.0;
+		gbc_imageLabel.gridheight = 2;
+		gbc_imageLabel.fill = GridBagConstraints.BOTH;
+		gbc_imageLabel.gridx = 0;
+		gbc_imageLabel.gridy = 0;
+		contentPane.add(imageLabel, gbc_imageLabel);
+		contentPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+	}
+
+}
