@@ -36,6 +36,7 @@ import com.crana.qcontroller.service.txrx.Transmitter;
 public class MapPanel extends JPanel {
 	private CommandPanel commandPanel;
 	private DeviceConfig myDeviceConfig;
+	private MapLoader mapLoader;
 	/**
 	 * Create the panel.
 	 * 
@@ -78,7 +79,7 @@ public class MapPanel extends JPanel {
 		mapButtonPanel.setLayout(gbl_mapButtonPanel);
 
 		MapContent mapContent = new MapContent();
-		MapLoader mapLoader = new MapLoader(mapContent);
+		mapLoader = new MapLoader(mapContent);
 		mapLoader.loadMap();
 
 		
@@ -162,6 +163,7 @@ public class MapPanel extends JPanel {
 	public void setMyDeviceConfig(DeviceConfig myDeviceConfig) {
 		this.myDeviceConfig = myDeviceConfig;
 		commandPanel.setMyDeviceConfig(myDeviceConfig);
+		mapLoader.setDeviceConfig(myDeviceConfig);
 	}
 	public void setTransmitter(Transmitter transmitter) {
 		commandPanel.setTransmitter(transmitter);

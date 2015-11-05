@@ -1,5 +1,6 @@
 package com.crana.qcontroller.service.txrx.impl;
 
+import com.crana.qcontroller.domain.DeviceConfig;
 import com.crana.qcontroller.domain.TxRxMessage;
 import com.crana.qcontroller.service.Command;
 import com.crana.qcontroller.service.txrx.Receiver;
@@ -11,9 +12,9 @@ public abstract class AbstractReceiver extends Thread implements Receiver {
 	private long receiverDelay = 1000;
 	private QControllerMainWindow mainWindow;
 	private ReceivedCommandProcessor receivedCommandProcessor = null;
-	public AbstractReceiver(QControllerMainWindow mainWindow) {
+	public AbstractReceiver(DeviceConfig myDeviceConfig, QControllerMainWindow mainWindow) {
 		this.mainWindow = mainWindow;
-		receivedCommandProcessor = new ReceivedCommandProcessor(mainWindow);
+		receivedCommandProcessor = new ReceivedCommandProcessor(myDeviceConfig, mainWindow);
 	}
 	protected abstract TxRxMessage receive() throws Exception ;
 	public final void run() {

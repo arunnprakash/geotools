@@ -14,9 +14,24 @@ public class DefaultReceiver extends AbstractReceiver {
 
 	private BufferedReader br;
 	private TxRxMessageBoundaryValueBuilder txrxMessageBoundaryValueBuilder;
-	public DefaultReceiver(DeviceConfig myDeviceConfig, Transmitter transmitter) {
+	public DefaultReceiver(DeviceConfig myDeviceConfig, Transmitter transmitter) throws Exception {
 		super(myDeviceConfig, transmitter);
 		txrxMessageBoundaryValueBuilder = new TxRxMessageBoundaryValueBuilder();
+		initStream();
+	}
+
+	private void initStream() throws Exception {
+		if (br == null) {
+			File file = new File(System.getProperty("user.home") + "\\tx.txt");
+			if (file.exists()) {
+				file.delete();
+				file.createNewFile();
+			} else {
+				file.createNewFile();
+			}
+			InputStream fis = new FileInputStream(file);
+			br = new BufferedReader(new InputStreamReader(fis));
+		}
 	}
 
 	@Override
@@ -33,15 +48,7 @@ public class DefaultReceiver extends AbstractReceiver {
 	}
 
 	private String readFromFile() throws Exception  {
-		if (br == null) {
-			File file = new File("e:\\tx.txt");
-			if (file.exists()) {
-				file.delete();
-				file.createNewFile();
-			}
-			InputStream fis = new FileInputStream(file);
-			br = new BufferedReader(new InputStreamReader(fis));
-		}
+
 		return br.readLine();
 	}
 

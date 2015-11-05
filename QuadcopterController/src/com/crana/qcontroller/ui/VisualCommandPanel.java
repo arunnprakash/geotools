@@ -1,24 +1,26 @@
 package com.crana.qcontroller.ui;
 
-import javax.swing.JPanel;
-
+import java.awt.Color;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
-import javax.swing.border.TitledBorder;
-import javax.swing.border.LineBorder;
-
-import java.awt.Color;
-
 import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JToggleButton;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 
 import com.crana.qcontroller.service.txrx.Transmitter;
 
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import javax.swing.JToggleButton;
-
 public class VisualCommandPanel extends JPanel {
 	private Transmitter transmitter;
+	private JToggleButton btnTurnoncamera;
+	private JToggleButton btnTurnonflashlight;
+	private JToggleButton btnStartlivestreaming;
+	private JButton btnShotphoto;
+	private JButton btnGetphoto;
+	private JToggleButton btnStartVideoRecording;
+	private JButton btnGetvideo;
 	/**
 	 * Create the panel.
 	 */
@@ -31,7 +33,8 @@ public class VisualCommandPanel extends JPanel {
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		
-		JToggleButton btnTurnoncamera = new JToggleButton("TurnOnCamera");
+		btnTurnoncamera = new JToggleButton("TurnOnCamera");
+		btnTurnoncamera.setEnabled(false);
 		GridBagConstraints gbc_btnTurnoncamera = new GridBagConstraints();
 		gbc_btnTurnoncamera.weightx = 1.0;
 		gbc_btnTurnoncamera.anchor = GridBagConstraints.EAST;
@@ -39,7 +42,8 @@ public class VisualCommandPanel extends JPanel {
 		gbc_btnTurnoncamera.gridy = 0;
 		add(btnTurnoncamera, gbc_btnTurnoncamera);
 		
-		JToggleButton btnTurnonflashlight = new JToggleButton("TurnOnFlashLight");
+		btnTurnonflashlight = new JToggleButton("TurnOnFlashLight");
+		btnTurnonflashlight.setEnabled(false);
 		GridBagConstraints gbc_btnTurnonflashlight = new GridBagConstraints();
 		gbc_btnTurnonflashlight.weightx = 1.0;
 		gbc_btnTurnonflashlight.anchor = GridBagConstraints.WEST;
@@ -47,7 +51,8 @@ public class VisualCommandPanel extends JPanel {
 		gbc_btnTurnonflashlight.gridy = 0;
 		add(btnTurnonflashlight, gbc_btnTurnonflashlight);
 		
-		JToggleButton btnStartlivestreaming = new JToggleButton("StartLiveStreaming");
+		btnStartlivestreaming = new JToggleButton("StartLiveStreaming");
+		btnStartlivestreaming.setEnabled(false);
 		GridBagConstraints gbc_btnStartlivestreaming = new GridBagConstraints();
 		gbc_btnStartlivestreaming.weightx = 1.0;
 		gbc_btnStartlivestreaming.gridwidth = 2;
@@ -55,7 +60,8 @@ public class VisualCommandPanel extends JPanel {
 		gbc_btnStartlivestreaming.gridy = 1;
 		add(btnStartlivestreaming, gbc_btnStartlivestreaming);
 		
-		JButton btnShotphoto = new JButton("ShotPhoto");
+		btnShotphoto = new JButton("ShotPhoto");
+		btnShotphoto.setEnabled(false);
 		GridBagConstraints gbc_btnShotphoto = new GridBagConstraints();
 		gbc_btnShotphoto.weightx = 1.0;
 		gbc_btnShotphoto.anchor = GridBagConstraints.EAST;
@@ -63,7 +69,8 @@ public class VisualCommandPanel extends JPanel {
 		gbc_btnShotphoto.gridy = 2;
 		add(btnShotphoto, gbc_btnShotphoto);
 		
-		JButton btnGetphoto = new JButton("GetPhoto");
+		btnGetphoto = new JButton("GetPhoto");
+		btnGetphoto.setEnabled(false);
 		GridBagConstraints gbc_btnGetphoto = new GridBagConstraints();
 		gbc_btnGetphoto.weightx = 1.0;
 		gbc_btnGetphoto.anchor = GridBagConstraints.WEST;
@@ -71,7 +78,8 @@ public class VisualCommandPanel extends JPanel {
 		gbc_btnGetphoto.gridy = 2;
 		add(btnGetphoto, gbc_btnGetphoto);
 		
-		JToggleButton btnStartVideoRecording = new JToggleButton("Start Video Recording");
+		btnStartVideoRecording = new JToggleButton("Start Video Recording");
+		btnStartVideoRecording.setEnabled(false);
 		GridBagConstraints gbc_btnStartVideoRecording = new GridBagConstraints();
 		gbc_btnStartVideoRecording.weightx = 1.0;
 		gbc_btnStartVideoRecording.anchor = GridBagConstraints.EAST;
@@ -79,7 +87,8 @@ public class VisualCommandPanel extends JPanel {
 		gbc_btnStartVideoRecording.gridy = 3;
 		add(btnStartVideoRecording, gbc_btnStartVideoRecording);
 		
-		JButton btnGetvideo = new JButton("GetVideo");
+		btnGetvideo = new JButton("GetVideo");
+		btnGetvideo.setEnabled(false);
 		GridBagConstraints gbc_btnGetvideo = new GridBagConstraints();
 		gbc_btnGetvideo.weightx = 1.0;
 		gbc_btnGetvideo.anchor = GridBagConstraints.WEST;
@@ -91,5 +100,33 @@ public class VisualCommandPanel extends JPanel {
 
 	public void setTransmitter(Transmitter transmitter) {
 		this.transmitter = transmitter;
+	}
+
+	public void enableVisualCommandButtons() {
+		btnTurnoncamera.setEnabled(true);
+		btnTurnoncamera.setSelected(false);
+		btnTurnonflashlight.setEnabled(true);
+		btnTurnonflashlight.setSelected(false);
+		btnStartlivestreaming.setEnabled(true);
+		btnStartlivestreaming.setSelected(false);
+		btnShotphoto.setEnabled(true);
+		btnGetphoto.setEnabled(true);
+		btnStartVideoRecording.setEnabled(true);
+		btnStartVideoRecording.setSelected(false);
+		btnGetvideo.setEnabled(true);
+	}
+
+	public void disableVisualCommandButtons() {
+		btnTurnoncamera.setEnabled(false);
+		btnTurnoncamera.setSelected(false);
+		btnTurnonflashlight.setEnabled(false);
+		btnTurnonflashlight.setSelected(false);
+		btnStartlivestreaming.setEnabled(false);
+		btnStartlivestreaming.setSelected(false);
+		btnShotphoto.setEnabled(false);
+		btnGetphoto.setEnabled(false);
+		btnStartVideoRecording.setEnabled(false);
+		btnStartVideoRecording.setSelected(false);
+		btnGetvideo.setEnabled(false);
 	}
 }

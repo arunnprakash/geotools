@@ -25,6 +25,10 @@ public class AutoPilotCommandPanel extends JPanel {
 	private JTextField destinationLatTextField;
 	private JTextField destinationLonTextField;
 	private JToggleButton btnPickFromMap;
+	private JToggleButton autoPilotButton;
+	private JPanel autoPilotPanel;
+	private JLabel latitudeLabel;
+	private JLabel longitudeLabel;
 	/**
 	 * Create the panel.
 	 */
@@ -36,7 +40,7 @@ public class AutoPilotCommandPanel extends JPanel {
 		gbl_commandPanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		this.setLayout(gbl_commandPanel);
 		
-		JPanel autoPilotPanel = new JPanel();
+		autoPilotPanel = new JPanel();
 		autoPilotPanel.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0)), "Auto Pilot", TitledBorder.LEFT, TitledBorder.TOP, null, null));
 		GridBagConstraints gbc_autoPilotPanel = new GridBagConstraints();
 		gbc_autoPilotPanel.fill = GridBagConstraints.BOTH;
@@ -49,20 +53,24 @@ public class AutoPilotCommandPanel extends JPanel {
 		gbl_autoPilotPanel.columnWeights = new double[]{1.0, 0.0};
 		gbl_autoPilotPanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		autoPilotPanel.setLayout(gbl_autoPilotPanel);
+		autoPilotPanel.setEnabled(false);
 		
-		final JToggleButton turnOnAutoPilotButton = new JToggleButton("Turn On Auto Pilot");
-		turnOnAutoPilotButton.addActionListener(new ActionListener() {
+		autoPilotButton = new JToggleButton("Turn On Auto Pilot");
+		autoPilotButton.setEnabled(false);
+		autoPilotButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (turnOnAutoPilotButton.isSelected()) {
-					turnOnAutoPilotButton.setText("Turn Off Auto Pilot");
+				if (autoPilotButton.isSelected()) {
+					autoPilotButton.setText("Turn Off Auto Pilot");
 					saveAutoPilotConfigButton.setEnabled(true);
 					destinationLatTextField.setEnabled(true);
 					destinationLonTextField.setEnabled(true);
 					destinationLatTextField.setEditable(true);
 					destinationLonTextField.setEditable(true);
 					btnPickFromMap.setEnabled(true);
+					latitudeLabel.setEnabled(true);
+					longitudeLabel.setEnabled(true);
 				} else {
-					turnOnAutoPilotButton.setText("Turn On Auto Pilot");
+					autoPilotButton.setText("Turn On Auto Pilot");
 					saveAutoPilotConfigButton.setEnabled(false);
 					destinationLatTextField.setEnabled(false);
 					destinationLonTextField.setEnabled(false);
@@ -70,14 +78,16 @@ public class AutoPilotCommandPanel extends JPanel {
 					destinationLonTextField.setEditable(false);
 					btnPickFromMap.setEnabled(false);
 					btnPickFromMap.setSelected(false);
+					latitudeLabel.setEnabled(false);
+					longitudeLabel.setEnabled(false);
 				}
 			}
 		});
-		GridBagConstraints gbc_turnOnAutoPilotButton = new GridBagConstraints();
-		gbc_turnOnAutoPilotButton.insets = new Insets(0, 0, 5, 0);
-		gbc_turnOnAutoPilotButton.gridx = 0;
-		gbc_turnOnAutoPilotButton.gridy = 0;
-		autoPilotPanel.add(turnOnAutoPilotButton, gbc_turnOnAutoPilotButton);
+		GridBagConstraints gbc_autoPilotButton = new GridBagConstraints();
+		gbc_autoPilotButton.insets = new Insets(0, 0, 5, 0);
+		gbc_autoPilotButton.gridx = 0;
+		gbc_autoPilotButton.gridy = 0;
+		autoPilotPanel.add(autoPilotButton, gbc_autoPilotButton);
 		
 		JPanel autoPilotConfigpanel = new JPanel();
 		GridBagConstraints gbc_autoPilotConfigpanel = new GridBagConstraints();
@@ -106,13 +116,14 @@ public class AutoPilotCommandPanel extends JPanel {
 		gbl_autoPilotInputConfigPanel.rowWeights = new double[]{0.0, 0.0};
 		autoPilotInputConfigPanel.setLayout(gbl_autoPilotInputConfigPanel);
 		
-		JLabel lblDestinationPoint = new JLabel("Destination Point - Lattitute  :  ");
-		GridBagConstraints gbc_lblDestinationPoint = new GridBagConstraints();
-		gbc_lblDestinationPoint.anchor = GridBagConstraints.EAST;
-		gbc_lblDestinationPoint.insets = new Insets(0, 0, 5, 5);
-		gbc_lblDestinationPoint.gridx = 0;
-		gbc_lblDestinationPoint.gridy = 0;
-		autoPilotInputConfigPanel.add(lblDestinationPoint, gbc_lblDestinationPoint);
+		latitudeLabel = new JLabel("Destination Point - Latitude  :  ");
+		latitudeLabel.setEnabled(false);
+		GridBagConstraints gbc_latitudeLabel = new GridBagConstraints();
+		gbc_latitudeLabel.anchor = GridBagConstraints.EAST;
+		gbc_latitudeLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_latitudeLabel.gridx = 0;
+		gbc_latitudeLabel.gridy = 0;
+		autoPilotInputConfigPanel.add(latitudeLabel, gbc_latitudeLabel);
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
@@ -138,13 +149,14 @@ public class AutoPilotCommandPanel extends JPanel {
 		panel_2.add(destinationLatTextField, gbc_destinationLatTextField);
 		destinationLatTextField.setColumns(15);
 		
-		JLabel lblNewLabel = new JLabel("Destination Point - Longitute  :  ");
-		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-		gbc_lblNewLabel.anchor = GridBagConstraints.EAST;
-		gbc_lblNewLabel.insets = new Insets(0, 0, 0, 5);
-		gbc_lblNewLabel.gridx = 0;
-		gbc_lblNewLabel.gridy = 1;
-		autoPilotInputConfigPanel.add(lblNewLabel, gbc_lblNewLabel);
+		longitudeLabel = new JLabel("Destination Point - Longitude  :  ");
+		longitudeLabel.setEnabled(false);
+		GridBagConstraints gbc_longitudeLabel = new GridBagConstraints();
+		gbc_longitudeLabel.anchor = GridBagConstraints.EAST;
+		gbc_longitudeLabel.insets = new Insets(0, 0, 0, 5);
+		gbc_longitudeLabel.gridx = 0;
+		gbc_longitudeLabel.gridy = 1;
+		autoPilotInputConfigPanel.add(longitudeLabel, gbc_longitudeLabel);
 		
 		JPanel panel_3 = new JPanel();
 		panel_3.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
@@ -215,5 +227,17 @@ public class AutoPilotCommandPanel extends JPanel {
 
 	public void setTransmitter(Transmitter transmitter) {
 		this.transmitter = transmitter;
+	}
+
+	public void enableAutoPilotButton() {
+		autoPilotPanel.setEnabled(true);
+		autoPilotButton.setSelected(false);
+		autoPilotButton.setEnabled(true);
+	}
+
+	public void disableAutoPilotButton() {
+		autoPilotPanel.setEnabled(false);
+		autoPilotButton.setSelected(false);
+		autoPilotButton.setEnabled(false);
 	}
 }

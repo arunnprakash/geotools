@@ -40,10 +40,13 @@ public class DrivingCommandPanel extends JPanel {
 	private JButton backwardButton;
 	private JButton downButton;
 	private QuadCopterLocator quadCopterLocator;
+	private CommandPanel commandPanel;
 	/**
 	 * Create the panel.
+	 * @param commandPanel 
 	 */
-	public DrivingCommandPanel() {
+	public DrivingCommandPanel(CommandPanel commandPanel1) {
+		this.commandPanel = commandPanel1;
 		setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0)), "Driving Commands", TitledBorder.LEFT, TitledBorder.TOP, null, null));
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
@@ -65,6 +68,7 @@ public class DrivingCommandPanel extends JPanel {
 		panel.setLayout(gbl_panel);
 		
 		btnStart = new JToggleButton("Start");
+		btnStart.setEnabled(false);
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				transmitter.transmit(Command.START);
@@ -75,6 +79,8 @@ public class DrivingCommandPanel extends JPanel {
 				btnStop.setEnabled(true);
 				btnStop.setSelected(false);
 				btnLand.setSelected(false);
+				commandPanel.disableQuadCopterPicker();
+				commandPanel.enableVisualCommands();
 			}
 		});
 		GridBagConstraints gbc_btnStart = new GridBagConstraints();
@@ -125,6 +131,8 @@ public class DrivingCommandPanel extends JPanel {
 				btnLand.setEnabled(false);
 				btnTakeoff.setSelected(false);
 				btnLand.setSelected(false);
+				commandPanel.enableQuadCopterPicker();
+				commandPanel.disableVisualCommands();
 			}
 		});
 		btnStop.setEnabled(false);
@@ -228,5 +236,13 @@ public class DrivingCommandPanel extends JPanel {
 		if (quadCopterLocator == null) {
 			quadCopterLocator = new QuadCopterLocatorImpl(transmitter);
 		}
+	}
+
+	public void enableStartButton() {
+		btnStart.setEnabled(true);
+	}
+
+	public void disableStartButton() {
+		btnStart.setEnabled(false);		
 	}
 }

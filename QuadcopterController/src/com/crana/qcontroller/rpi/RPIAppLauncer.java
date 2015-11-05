@@ -4,6 +4,8 @@
 package com.crana.qcontroller.rpi;
 
 import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_ID_KEY;
+import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_LATITUDE_KEY;
+import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_LONGITUDE_KEY;
 import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_NAME_KEY;
 import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_LOCOMOTION_TYPE_KEY;
 
@@ -80,16 +82,18 @@ public class RPIAppLauncer extends Thread {
 		props.load(is);
 		myDeviceConfig.setDeviceName(props.getProperty(DEVICE_NAME_KEY));
 		myDeviceConfig.setDeviceId(props.getProperty(DEVICE_ID_KEY));
+		myDeviceConfig.setLatitude(Double.parseDouble(props.getProperty(DEVICE_LATITUDE_KEY)));
+		myDeviceConfig.setLongitude(Double.parseDouble(props.getProperty(DEVICE_LONGITUDE_KEY)));
 		myDeviceConfig.setLocomotionType(DeviceLocomotionType.valueOf(props.getProperty(DEVICE_LOCOMOTION_TYPE_KEY)));
 		is.close();
 		return myDeviceConfig;
 	}
-	private Transmitter initTransmitter(DeviceConfig myDeviceConfig) {
+	private Transmitter initTransmitter(DeviceConfig myDeviceConfig) throws Exception {
 		Transmitter transmitter = new DefaultTransmitter(myDeviceConfig);
 		transmitter.startTransmitter();
 		return transmitter;
 	}
-	private Receiver initReceiver(DeviceConfig myDeviceConfig, Transmitter transmitter) {
+	private Receiver initReceiver(DeviceConfig myDeviceConfig, Transmitter transmitter) throws Exception {
 		Receiver receiver = new DefaultReceiver(myDeviceConfig, transmitter);
 		receiver.startReceiver();
 		return receiver;

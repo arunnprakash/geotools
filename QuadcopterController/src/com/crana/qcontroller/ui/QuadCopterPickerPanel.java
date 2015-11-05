@@ -36,10 +36,13 @@ public class QuadCopterPickerPanel extends JPanel {
 	private JComboBox<DeviceConfig> comboBox;
 	private JButton btnDone;
 	private DeviceConfig myDeviceConfig;
+	private CommandPanel commandPanel;
 	/**
 	 * Create the panel.
+	 * @param commandPanel 
 	 */
-	public QuadCopterPickerPanel() {
+	public QuadCopterPickerPanel(CommandPanel commandPanel1) {
+		this.commandPanel = commandPanel1;
 		setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0)), "QuadCopter Picker", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
@@ -109,6 +112,7 @@ public class QuadCopterPickerPanel extends JPanel {
 				DeviceConfig deviceConfig = (DeviceConfig)comboBox.getSelectedItem();
 				lblYouAreGoing.setText("You are Going to Drive " + deviceConfig.getDeviceName());
 				myDeviceConfig.setEdgeTerminalDevice(deviceConfig);
+				commandPanel.enableDefaultControlls();
 			}
 		});
 		GridBagConstraints gbc_btnDone = new GridBagConstraints();
@@ -129,5 +133,11 @@ public class QuadCopterPickerPanel extends JPanel {
 				comboBox.addItem(deviceConfig);
 			}
 		}
+	}
+	public void enableQuadCopterPickerLabel() {
+		lblpickYourQuadcopter.setEnabled(true);
+	}
+	public void disableQuadCopterPickerLabel() {
+		lblpickYourQuadcopter.setEnabled(false);		
 	}
 }

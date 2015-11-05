@@ -36,7 +36,7 @@ public class DefaultTransmitter extends AbstractTransmitter {
 
 	private void writeToFile(String transmissionMessage) throws IOException {
 		if (bw == null) {
-			File file = new File("e:\\tx.txt");
+			File file = new File(System.getProperty("user.home") + "\\tx.txt");
 			OutputStream fos = new FileOutputStream(file);
 			bw = new BufferedWriter(new OutputStreamWriter(fos));
 		}

@@ -16,7 +16,7 @@ public class DefaultReceiver extends AbstractReceiver {
 	private BufferedReader br;
 	private TxRxMessageBoundaryValueBuilder txrxMessageBoundaryValueBuilder;
 	public DefaultReceiver(DeviceConfig myDeviceConfig, QControllerMainWindow mainWindow) {
-		super(mainWindow);
+		super(myDeviceConfig, mainWindow);
 		txrxMessageBoundaryValueBuilder = new TxRxMessageBoundaryValueBuilder();
 	}
 
@@ -35,7 +35,7 @@ public class DefaultReceiver extends AbstractReceiver {
 
 	private String readFromFile() throws Exception  {
 		if (br == null) {
-			File file = new File("e:\\rx.txt");
+			File file = new File(System.getProperty("user.home") + "\\rx.txt");
 			InputStream fis = new FileInputStream(file);
 			br = new BufferedReader(new InputStreamReader(fis));
 		}

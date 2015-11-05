@@ -20,6 +20,8 @@ import javax.swing.border.EmptyBorder;
 import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_ID_KEY;
 import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_LOCOMOTION_TYPE_KEY;
 import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_NAME_KEY;
+import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_LATITUDE_KEY;
+import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_LONGITUDE_KEY;
 
 import com.crana.qcontroller.domain.DeviceConfig;
 import com.crana.qcontroller.domain.DeviceLocomotionType;
@@ -87,16 +89,18 @@ public class AppLauncher extends JFrame {
 			private DeviceConfig loadMyDeviceConfig() throws Exception {
 				DeviceConfig myDeviceConfig = new DeviceConfig();
 				InputStream is = null;
-				File myDeviceConfigPropertyFile = new File(System.getProperty("user.home") + "\\my_device_default_config.properties");
+				File myDeviceConfigPropertyFile = new File(System.getProperty("user.home") + "\\device_default_config.properties");
 				if (myDeviceConfigPropertyFile.exists()) {
 					is = new FileInputStream(myDeviceConfigPropertyFile);
 				} else {
-					is = AppLauncher.class.getResourceAsStream("/com/crana/qcontroller/resources/my_device_default_config.properties");
+					is = AppLauncher.class.getResourceAsStream("/com/crana/qcontroller/resources/device_default_config.properties");
 				}
 				Properties props = new Properties();
 				props.load(is);
 				myDeviceConfig.setDeviceName(props.getProperty(DEVICE_NAME_KEY));
 				myDeviceConfig.setDeviceId(props.getProperty(DEVICE_ID_KEY));
+				myDeviceConfig.setLatitude(Double.parseDouble(props.getProperty(DEVICE_LATITUDE_KEY)));
+				myDeviceConfig.setLongitude(Double.parseDouble(props.getProperty(DEVICE_LONGITUDE_KEY)));
 				myDeviceConfig.setLocomotionType(DeviceLocomotionType.valueOf(props.getProperty(DEVICE_LOCOMOTION_TYPE_KEY)));
 				is.close();
 				return myDeviceConfig;
@@ -172,7 +176,7 @@ public class AppLauncher extends JFrame {
 		
 		JLabel imageLabel = new JLabel("");
 		imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		imageLabel.setIcon(new ImageIcon(AppLauncher.class.getResource("/com/crana/qcontroller/resources/images/DRONE_small.jpg")));
+		//imageLabel.setIcon(new ImageIcon(AppLauncher.class.getResource("/com/crana/qcontroller/resources/images/DRONE_small.jpg")));
 		GridBagConstraints gbc_imageLabel = new GridBagConstraints();
 		gbc_imageLabel.weighty = 1.0;
 		gbc_imageLabel.weightx = 1.0;

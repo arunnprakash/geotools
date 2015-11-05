@@ -31,9 +31,9 @@ public class DeviceConfig implements Serializable {
 	@JsonIgnore
 	private Map<String, DeviceConfig> devices = new LinkedHashMap<String, DeviceConfig>();
 	@JsonProperty("lat")
-	private double latitute;
+	private double latitude;
 	@JsonProperty("long")
-	private double longitute;
+	private double longitude;
 	@JsonIgnore
 	private double distance;
 	
@@ -73,17 +73,17 @@ public class DeviceConfig implements Serializable {
 	public void setDevices(Map<String, DeviceConfig> devices) {
 		this.devices = devices;
 	}
-	public double getLatitute() {
-		return latitute;
+	public double getLatitude() {
+		return latitude;
 	}
-	public void setLatitute(double latitute) {
-		this.latitute = latitute;
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
 	}
-	public double getLongitute() {
-		return longitute;
+	public double getLongitude() {
+		return longitude;
 	}
-	public void setLongitute(double longitute) {
-		this.longitute = longitute;
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
 	}
 	public double getDistance() {
 		return distance;

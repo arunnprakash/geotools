@@ -28,7 +28,7 @@ public class CommandPanel extends JPanel {
 		gbl_commandPanel.rowWeights = new double[]{1.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
 		setLayout(gbl_commandPanel);
 		
-		quadCopterPickerPanel = new QuadCopterPickerPanel();
+		quadCopterPickerPanel = new QuadCopterPickerPanel(this);
 		GridBagConstraints gbc_quadCopterPickerPanel = new GridBagConstraints();
 		gbc_quadCopterPickerPanel.anchor = GridBagConstraints.NORTHWEST;
 		gbc_quadCopterPickerPanel.insets = new Insets(0, 0, 5, 0);
@@ -46,7 +46,7 @@ public class CommandPanel extends JPanel {
 		gbc_autoPilotCommandPanel.gridy = 1;
 		add(autoPilotCommandPanel, gbc_autoPilotCommandPanel);
 		
-		drivingCommandPanel = new DrivingCommandPanel();
+		drivingCommandPanel = new DrivingCommandPanel(this);
 		GridBagConstraints gbc_drivingCommandPanel = new GridBagConstraints();
 		gbc_drivingCommandPanel.insets = new Insets(0, 0, 5, 0);
 		gbc_drivingCommandPanel.fill = GridBagConstraints.HORIZONTAL;
@@ -64,6 +64,7 @@ public class CommandPanel extends JPanel {
 		gbc_visualCommandPanel.gridx = 0;
 		gbc_visualCommandPanel.gridy = 3;
 		add(visualCommandPanel, gbc_visualCommandPanel);
+		disableDefaultControlls();
 	}
 	public CommandPanel(DeviceConfig myDeviceConfig) {
 		this();
@@ -81,5 +82,35 @@ public class CommandPanel extends JPanel {
 	}
 	public QuadCopterPickerPanel getQuadCopterPicker() {
 		return quadCopterPickerPanel;
+	}
+	public void enableVisualCommands() {
+		visualCommandPanel.setEnabled(true);
+		visualCommandPanel.enableVisualCommandButtons();
+	}
+	public void disableVisualCommands() {
+		visualCommandPanel.setEnabled(false);
+		visualCommandPanel.disableVisualCommandButtons();
+	}
+	public void enableQuadCopterPicker() {
+		quadCopterPickerPanel.setEnabled(true);
+		quadCopterPickerPanel.enableQuadCopterPickerLabel();
+	}
+	public void disableQuadCopterPicker() {
+		quadCopterPickerPanel.setEnabled(false);
+		quadCopterPickerPanel.disableQuadCopterPickerLabel();
+	}
+	public void enableDefaultControlls() {
+		drivingCommandPanel.setEnabled(true);
+		autoPilotCommandPanel.setEnabled(true);
+		autoPilotCommandPanel.enableAutoPilotButton();
+		drivingCommandPanel.enableStartButton();
+
+	}
+	public void disableDefaultControlls() {
+		visualCommandPanel.setEnabled(false);
+		drivingCommandPanel.setEnabled(false);
+		autoPilotCommandPanel.setEnabled(false);
+		autoPilotCommandPanel.disableAutoPilotButton();
+		drivingCommandPanel.disableStartButton();
 	}
 }

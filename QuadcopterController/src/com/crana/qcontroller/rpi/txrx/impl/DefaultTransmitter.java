@@ -13,9 +13,24 @@ import com.crana.qcontroller.domain.TxRxMessage;
 public class DefaultTransmitter extends AbstractTransmitter {
 	private TxRxMessageBoundaryValueBuilder txrxMessageBoundaryValueBuilder;
 	private BufferedWriter bw;
-	public DefaultTransmitter(DeviceConfig myDeviceConfig) {
+	public DefaultTransmitter(DeviceConfig myDeviceConfig) throws Exception {
 		super(myDeviceConfig);
 		txrxMessageBoundaryValueBuilder = new TxRxMessageBoundaryValueBuilder();
+		initStream();
+	}
+
+	private void initStream() throws Exception {
+		if (bw == null) {
+			File file = new File(System.getProperty("user.home") + "\\rx.txt");
+			if (file.exists()) {
+				file.delete();
+				file.createNewFile();
+			} else {
+				file.createNewFile();
+			}
+			OutputStream fos = new FileOutputStream(file);
+			bw = new BufferedWriter(new OutputStreamWriter(fos));
+		}
 	}
 
 	@Override
@@ -32,15 +47,6 @@ public class DefaultTransmitter extends AbstractTransmitter {
 	}
 
 	private void writeToFile(String transmissionMessage) throws IOException {
-		if (bw == null) {
-			File file = new File("e:\\rx.txt");
-			if (file.exists()) {
-				file.delete();
-				file.createNewFile();
-			}
-			OutputStream fos = new FileOutputStream(file);
-			bw = new BufferedWriter(new OutputStreamWriter(fos));
-		}
 		bw.write("\n\r"+transmissionMessage);
 		bw.flush();
 	}
