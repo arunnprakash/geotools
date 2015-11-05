@@ -29,6 +29,16 @@ public class AutoPilotCommandPanel extends JPanel {
 	private JPanel autoPilotPanel;
 	private JLabel latitudeLabel;
 	private JLabel longitudeLabel;
+	private boolean pickLatLonFromMap = false;
+	
+	public boolean isPickLatLonFromMap() {
+		return pickLatLonFromMap;
+	}
+
+	public void setLatLon(double latitude, double longitude) {
+		destinationLatTextField.setText(String.valueOf(latitude));
+		destinationLonTextField.setText(String.valueOf(longitude));
+	}
 	/**
 	 * Create the panel.
 	 */
@@ -198,6 +208,11 @@ public class AutoPilotCommandPanel extends JPanel {
 		autoPilotButtonPanel.setLayout(gbl_autoPilotButtonPanel);
 		
 		saveAutoPilotConfigButton = new JButton("Save");
+		saveAutoPilotConfigButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				pickLatLonFromMap = false;
+			}
+		});
 		saveAutoPilotConfigButton.setEnabled(false);
 		GridBagConstraints gbc_saveAutoPilotConfigButton = new GridBagConstraints();
 		gbc_saveAutoPilotConfigButton.gridx = 0;
@@ -210,9 +225,11 @@ public class AutoPilotCommandPanel extends JPanel {
 				if(btnPickFromMap.isSelected()) {
 					destinationLatTextField.setEditable(false);
 					destinationLonTextField.setEditable(false);
+					pickLatLonFromMap = true;
 				} else {
 					destinationLatTextField.setEditable(true);
 					destinationLonTextField.setEditable(true);
+					pickLatLonFromMap = false;
 				}
 			}
 		});

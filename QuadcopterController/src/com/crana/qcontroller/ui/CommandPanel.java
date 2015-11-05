@@ -15,6 +15,9 @@ public class CommandPanel extends JPanel {
 	private VisualCommandPanel visualCommandPanel;
 	private DrivingCommandPanel drivingCommandPanel;
 	private AutoPilotCommandPanel autoPilotCommandPanel;
+	public AutoPilotCommandPanel getAutoPilotCommandPanel() {
+		return autoPilotCommandPanel;
+	}
 	private QuadCopterPickerPanel quadCopterPickerPanel;
 	private DeviceConfig myDeviceConfig;
 	/**

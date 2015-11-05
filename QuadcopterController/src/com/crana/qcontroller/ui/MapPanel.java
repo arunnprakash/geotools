@@ -105,10 +105,13 @@ public class MapPanel extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				MapMouseEvent mme = mapPane.getMouseEventDispatcher().convertEvent(e);
-				double longitute = mme.getWorldPos().getX();
-				double latitute = mme.getWorldPos().getY();
-				System.out.println("latitute:: " + latitute);
-				System.out.println("longitute:: " + longitute);
+				double longitude = mme.getWorldPos().getX();
+				double latitude = mme.getWorldPos().getY();
+				System.out.println("latitude:: " + latitude);
+				System.out.println("longitute:: " + longitude);
+				if (commandPanel.getAutoPilotCommandPanel().isPickLatLonFromMap()) {
+					commandPanel.getAutoPilotCommandPanel().setLatLon(latitude, longitude);
+				}
 			}
 		});
 		mapPane.addMouseWheelListener(new MouseWheelListener() {
