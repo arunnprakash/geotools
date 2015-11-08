@@ -29,7 +29,7 @@ public class TransmitCommandProcessor extends Thread {
 				return buildMessage(command.getCommandId());
 			}
 			default: {
-				throw new IllegalArgumentException("No Implmentation found in TransmitCommandProcessor with Command::"+command.name());
+				throw new IllegalArgumentException("No Implmentation found in TransmitCommandProcessor for Command::"+command.name());
 			}
 		}
 	}
