@@ -45,7 +45,13 @@ public class ReceivedCommandProcessor extends Thread {
 		Command command = Command.getCommandByCommandId(message.getCommandId());
 		switch(command) {
 			case INVITE: {
-				transmitter.transmit(buildInviteResponseMessage(message));
+				Integer commandId = Command.INVITE_RESPONSE.getCommandId();
+				transmitter.transmit(buildResponse(commandId, message));
+				break;
+			}
+			case GET_GPS_LOCATION: {
+				Integer commandId = Command.INVITE_RESPONSE.getCommandId();
+				transmitter.transmit(buildResponse(commandId, message));
 				break;
 			}
 			default: {
@@ -53,9 +59,9 @@ public class ReceivedCommandProcessor extends Thread {
 			}
 		}
 	}
-	private TxRxMessage buildInviteResponseMessage(TxRxMessage receivedMessage) throws Exception {
+	private TxRxMessage buildResponse(Integer commandId, TxRxMessage receivedMessage) throws Exception {
 		TxRxMessage txRxMessage = TxRxMessageBuilder.txRxMessage()
-				.withCommandId(Command.INVITE_RESPONSE.getCommandId())
+				.withCommandId(commandId)
 				.withSender(myDeviceConfig.getDeviceId())
 				.withRecipient(receivedMessage.getSender())
 				.withOriginalSender(myDeviceConfig.getDeviceId())

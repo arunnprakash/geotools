@@ -45,15 +45,27 @@ public class ReceivedCommandProcessor extends Thread {
 		Command command = Command.getCommandByCommandId(message.getCommandId());
 		switch(command) {
 			case INVITE_RESPONSE: {
-				DeviceConfig deviceConfig = getDeviceConfig(message.getPayload());
-				calculateDistance(deviceConfig);
-				mainWindow.addNeighbourDevice(deviceConfig);
+				processInviteResponse(message);
+				break;
+			}
+			case GPS_LOCATION_RESPONSE: {
+				processGpsLocationResponse(message);
 				break;
 			}
 			default: {
 				throw new IllegalArgumentException("No Implementation found in ReceivedCommandProcessor for Command::"+command.name());
 			}
 		}
+	}
+	private void processGpsLocationResponse(TxRxMessage message) throws Exception {
+		DeviceConfig deviceConfig = getDeviceConfig(message.getPayload());
+		calculateDistance(deviceConfig);
+		mainWindow.addNeighbourDevice(deviceConfig);
+	}
+	private void processInviteResponse(TxRxMessage message) throws Exception {
+		DeviceConfig deviceConfig = getDeviceConfig(message.getPayload());
+		calculateDistance(deviceConfig);
+		mainWindow.addNeighbourDevice(deviceConfig);
 	}
 	private void calculateDistance(DeviceConfig deviceConfig) {
 		double distance = DistanceCalculator.distance(myDeviceConfig.getLatitude(), myDeviceConfig.getLongitude(), deviceConfig.getLatitude(), deviceConfig.getLongitude(), 8, 8);
