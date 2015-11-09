@@ -23,15 +23,29 @@ public class TransmitCommandProcessor extends Thread {
 	}
 	private TxRxMessage process(Command command) throws Exception {
 		switch(command) {
+			case INVITE: {
+				return buildInviteMessage(command.getCommandId());
+			}
 			case START: {
 				return buildMessage(command.getCommandId());
 			}
 			default: {
-				throw new IllegalArgumentException("No Implmentation found in TransmitCommandProcessor for Command::"+command.name());
+				throw new IllegalArgumentException("No Implementation found in TransmitCommandProcessor for Command::"+command.name());
 			}
 		}
 	}
-
+	private TxRxMessage buildInviteMessage(int commandId) throws Exception {
+		TxRxMessage txRxMessage = TxRxMessageBuilder.txRxMessage()
+				.withMessageId(messageId++)
+				.withCommandId(commandId)
+				.withSender(myDeviceConfig.getDeviceId())
+				.withRecipient(null)
+				.withOriginalSender(myDeviceConfig.getDeviceId())
+				.withOriginalRecipient(null)
+				.withPayload(objectMapper.writeValueAsString(myDeviceConfig))
+				.build();
+		return txRxMessage;
+	}
 	private TxRxMessage buildMessage(int commandId) {
 		TxRxMessage txRxMessage = TxRxMessageBuilder.txRxMessage()
 				.withMessageId(messageId++)

@@ -4,17 +4,20 @@ import com.crana.qcontroller.domain.DeviceConfig;
 import com.crana.qcontroller.domain.TxRxMessage;
 import com.crana.qcontroller.service.Command;
 import com.crana.qcontroller.service.txrx.Receiver;
+import com.crana.qcontroller.service.txrx.Transmitter;
 import com.crana.qcontroller.ui.QControllerMainWindow;
 
 public abstract class AbstractReceiver extends Thread implements Receiver {
 	private boolean ready = false;
 	private boolean stopReceiver = false;
 	private long receiverDelay = 1000;
+	private DeviceConfig myDeviceConfig;
 	private QControllerMainWindow mainWindow;
 	private ReceivedCommandProcessor receivedCommandProcessor = null;
-	public AbstractReceiver(DeviceConfig myDeviceConfig, QControllerMainWindow mainWindow) {
+	public AbstractReceiver(DeviceConfig myDeviceConfig, Transmitter transmitter, QControllerMainWindow mainWindow) {
+		this.myDeviceConfig = myDeviceConfig;
 		this.mainWindow = mainWindow;
-		receivedCommandProcessor = new ReceivedCommandProcessor(myDeviceConfig, mainWindow);
+		receivedCommandProcessor = new ReceivedCommandProcessor(myDeviceConfig, transmitter, mainWindow);
 	}
 	protected abstract TxRxMessage receive() throws Exception ;
 	public final void run() {
@@ -22,7 +25,7 @@ public abstract class AbstractReceiver extends Thread implements Receiver {
 			receivedCommandProcessor.start();
 			while(!stopReceiver) {
 				TxRxMessage message = receive();
-				if (message != null) {
+				if (message != null && isForMe(message)) {
 					log(message);
 					receivedCommandProcessor.addToMessageProcessorQueue(message);
 				}
@@ -32,6 +35,11 @@ public abstract class AbstractReceiver extends Thread implements Receiver {
 		} catch (Exception exp) {
 			exp.printStackTrace();
 		}
+	}
+	private boolean isForMe(TxRxMessage message) {
+		return message.getRecipient() == null 
+				|| message.getRecipient().equalsIgnoreCase(myDeviceConfig.getDeviceId()) 
+				|| message.getOriginalRecipient().equalsIgnoreCase(myDeviceConfig.getDeviceId());
 	}
 	public final boolean isReady() {
 		return ready;

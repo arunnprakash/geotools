@@ -9,14 +9,15 @@ import java.io.InputStreamReader;
 
 import com.crana.qcontroller.domain.DeviceConfig;
 import com.crana.qcontroller.domain.TxRxMessage;
+import com.crana.qcontroller.service.txrx.Transmitter;
 import com.crana.qcontroller.ui.QControllerMainWindow;
 
 public class DefaultReceiver extends AbstractReceiver {
 
 	private BufferedReader br;
 	private TxRxMessageBoundaryValueBuilder txrxMessageBoundaryValueBuilder;
-	public DefaultReceiver(DeviceConfig myDeviceConfig, QControllerMainWindow mainWindow) {
-		super(myDeviceConfig, mainWindow);
+	public DefaultReceiver(DeviceConfig myDeviceConfig, Transmitter transmitter, QControllerMainWindow mainWindow) {
+		super(myDeviceConfig, transmitter, mainWindow);
 		txrxMessageBoundaryValueBuilder = new TxRxMessageBoundaryValueBuilder();
 	}
 

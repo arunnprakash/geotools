@@ -18,7 +18,7 @@ public abstract class AbstractTransmitter extends Thread implements Transmitter 
 	private TransmitCommandProcessor transmitCommandProcessor = null;
 	private Queue<TxRxMessage> messageQueue = new LinkedList<TxRxMessage>();
 	private Queue<Command> commandQueue = new LinkedList<Command>();
-	protected abstract void transmit(TxRxMessage txRxMessage);
+	protected abstract void transmitMessage(TxRxMessage txRxMessage);
 	public AbstractTransmitter(DeviceConfig myDeviceConfig, JTextPane txMessageLogger) {
 		this.txMessageLogger = txMessageLogger;
 		transmitCommandProcessor = new TransmitCommandProcessor(myDeviceConfig);
@@ -34,7 +34,7 @@ public abstract class AbstractTransmitter extends Thread implements Transmitter 
 				}
 				while (!messageQueue.isEmpty()) {
 					TxRxMessage txRxMessage = messageQueue.poll();
-					transmit(txRxMessage);
+					transmitMessage(txRxMessage);
 					log(txRxMessage);
 				}
 				Thread.sleep(transmissionDelay);
@@ -50,6 +50,10 @@ public abstract class AbstractTransmitter extends Thread implements Transmitter 
 	}
 	public void transmit(Command command) {
 		commandQueue.add(command);
+	}
+	public void transmit(TxRxMessage message) {
+		transmitCommandProcessor.setMessageId(message);
+		messageQueue.add(message);
 	}
 	public final void startTransmitter() {
 		this.start();

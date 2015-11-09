@@ -3,6 +3,7 @@
  */
 package com.crana.qcontroller.service.txrx;
 
+import com.crana.qcontroller.domain.TxRxMessage;
 import com.crana.qcontroller.service.Command;
 
 /**
@@ -12,6 +13,7 @@ import com.crana.qcontroller.service.Command;
 public interface Transmitter {
 	public void startTransmitter();
 	public void transmit(Command command);
+	public void transmit(TxRxMessage message);
 	public void stopTransmitter();
 	public boolean isReady();
 }

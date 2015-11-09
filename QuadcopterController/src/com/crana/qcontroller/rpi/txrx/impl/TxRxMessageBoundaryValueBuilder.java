@@ -19,9 +19,14 @@ public class TxRxMessageBoundaryValueBuilder {
 	}
 
 	public TxRxMessage buildReceivedMessage(String receivedMessage) throws Exception {
-		String decyptedMessage = decrypt(receivedMessage);
-		String txTxMessageString = removeBoundaryValue(decyptedMessage);
-		return objectMapper.readValue(txTxMessageString, TxRxMessage.class);
+		try {
+			String decyptedMessage = decrypt(receivedMessage);
+			String txTxMessageString = removeBoundaryValue(decyptedMessage);
+			return objectMapper.readValue(txTxMessageString, TxRxMessage.class);
+		} catch (Exception e) {
+			System.out.println("Unable To Build ReceivedMessage from::"+receivedMessage);
+			throw new Exception(e);
+		}
 	}
 
 	private String removeBoundaryValue(String decyptedMessage) {

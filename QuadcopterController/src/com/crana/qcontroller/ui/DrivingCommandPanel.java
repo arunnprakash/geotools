@@ -81,6 +81,7 @@ public class DrivingCommandPanel extends JPanel {
 				btnLand.setSelected(false);
 				commandPanel.disableQuadCopterPicker();
 				commandPanel.enableVisualCommands();
+				//quadCopterLocator.startTracking();
 			}
 		});
 		GridBagConstraints gbc_btnStart = new GridBagConstraints();
@@ -133,6 +134,7 @@ public class DrivingCommandPanel extends JPanel {
 				btnLand.setSelected(false);
 				commandPanel.enableQuadCopterPicker();
 				commandPanel.disableVisualCommands();
+				//quadCopterLocator.stopTracking();
 			}
 		});
 		btnStop.setEnabled(false);

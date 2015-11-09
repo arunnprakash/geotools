@@ -11,7 +11,6 @@ import javax.swing.JTextPane;
 
 import com.crana.qcontroller.domain.DeviceConfig;
 import com.crana.qcontroller.domain.TxRxMessage;
-import com.crana.qcontroller.service.Command;
 
 public class DefaultTransmitter extends AbstractTransmitter {
 	private TxRxMessageBoundaryValueBuilder txrxMessageBoundaryValueBuilder;
@@ -22,7 +21,7 @@ public class DefaultTransmitter extends AbstractTransmitter {
 	}
 
 	@Override
-	protected void transmit(TxRxMessage txRxMessage) {
+	protected void transmitMessage(TxRxMessage txRxMessage) {
 		String transmissionMessage = null;
 		try {
 			transmissionMessage = txrxMessageBoundaryValueBuilder.buildTransmissionMessage(txRxMessage);
@@ -40,7 +39,7 @@ public class DefaultTransmitter extends AbstractTransmitter {
 			OutputStream fos = new FileOutputStream(file);
 			bw = new BufferedWriter(new OutputStreamWriter(fos));
 		}
-		bw.write("\n\r"+transmissionMessage);
+		bw.write(transmissionMessage + System.lineSeparator());
 		bw.flush();
 	}
 

@@ -265,18 +265,7 @@ public class MyDeviceConfigPanel extends JPanel {
 		populateMyDeviceConfig();
 	}
 	public void addNeighbourDevice(DeviceConfig deviceConfig) {
-		myDeviceConfig.getDevices().put(deviceConfig.getDeviceId(), deviceConfig);
 		neighbourDevicesComboBox.addItem(deviceConfig);
-		setNeighbourDevice();
 	}
-	private void setNeighbourDevice() {
-		DeviceConfig myNeigbour = null;
-		for (String deviceId : myDeviceConfig.getDevices().keySet()) {
-			DeviceConfig deviceConfig = myDeviceConfig.getDevices().get(deviceId);
-			if (myNeigbour == null || deviceConfig.getDistance() < myNeigbour.getDistance()) {
-				myNeigbour = deviceConfig;
-			}
-		}
-		myDeviceConfig.setMyNeigbour(myNeigbour);
-	}
+
 }

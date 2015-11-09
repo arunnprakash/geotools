@@ -25,6 +25,7 @@ import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_LON
 
 import com.crana.qcontroller.domain.DeviceConfig;
 import com.crana.qcontroller.domain.DeviceLocomotionType;
+import com.crana.qcontroller.domain.GpsLocation;
 import com.crana.qcontroller.service.Command;
 import com.crana.qcontroller.service.txrx.Receiver;
 import com.crana.qcontroller.service.txrx.Transmitter;
@@ -54,13 +55,16 @@ public class AppLauncher extends JFrame {
 					QControllerMainWindow window = createQControllerMainWindow(myDeviceConfig);
 					appLauncer.setProgress(30);
 					appLauncer.setStatus("Initialize Transmitter...");
+					
 					Transmitter transmitter = initTransmitter(window, myDeviceConfig);
 					waitForTransmitterIsToReady(transmitter);
 					appLauncer.setProgress(50);
+					
 					appLauncer.setStatus("Initialize Receiver...");
-					Receiver receiver = initReceiver(window, myDeviceConfig);
+					Receiver receiver = initReceiver(myDeviceConfig, transmitter, window);
 					waitForReceiverIsToReady(receiver);
 					appLauncer.setProgress(70);
+					
 					appLauncer.setStatus("BroadCasting My Device Configuration");
 					broadCastMyDeviceConfig(transmitter);
 					appLauncer.setProgress(90);
@@ -99,8 +103,10 @@ public class AppLauncher extends JFrame {
 				props.load(is);
 				myDeviceConfig.setDeviceName(props.getProperty(DEVICE_NAME_KEY));
 				myDeviceConfig.setDeviceId(props.getProperty(DEVICE_ID_KEY));
-				myDeviceConfig.setLatitude(Double.parseDouble(props.getProperty(DEVICE_LATITUDE_KEY)));
-				myDeviceConfig.setLongitude(Double.parseDouble(props.getProperty(DEVICE_LONGITUDE_KEY)));
+				GpsLocation gpsLocation = new GpsLocation();
+				gpsLocation.setLatitude(Double.parseDouble(props.getProperty(DEVICE_LATITUDE_KEY)));
+				gpsLocation.setLongitude(Double.parseDouble(props.getProperty(DEVICE_LONGITUDE_KEY)));
+				myDeviceConfig.setGpsLocation(gpsLocation);
 				myDeviceConfig.setLocomotionType(DeviceLocomotionType.valueOf(props.getProperty(DEVICE_LOCOMOTION_TYPE_KEY)));
 				is.close();
 				return myDeviceConfig;
@@ -114,8 +120,8 @@ public class AppLauncher extends JFrame {
 				window.setTransmitter(transmitter);
 				return transmitter;
 			}
-			private Receiver initReceiver(QControllerMainWindow window, DeviceConfig myDeviceConfig) {
-				Receiver receiver = new DefaultReceiver(myDeviceConfig, window);
+			private Receiver initReceiver(DeviceConfig myDeviceConfig, Transmitter transmitter, QControllerMainWindow window) {
+				Receiver receiver = new DefaultReceiver(myDeviceConfig, transmitter, window);
 				receiver.startReceiver();
 				return receiver;
 			}

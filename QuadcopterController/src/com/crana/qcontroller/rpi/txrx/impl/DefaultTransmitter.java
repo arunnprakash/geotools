@@ -47,7 +47,7 @@ public class DefaultTransmitter extends AbstractTransmitter {
 	}
 
 	private void writeToFile(String transmissionMessage) throws IOException {
-		bw.write("\n\r"+transmissionMessage);
+		bw.write(transmissionMessage +  System.lineSeparator());
 		bw.flush();
 	}
 

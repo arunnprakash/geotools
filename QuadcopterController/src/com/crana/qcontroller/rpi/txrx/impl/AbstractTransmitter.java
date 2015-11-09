@@ -31,6 +31,7 @@ public abstract class AbstractTransmitter extends Thread implements Transmitter 
 				while (!messageQueue.isEmpty()) {
 					TxRxMessage txRxMessage = messageQueue.poll();
 					transmitMessage(txRxMessage);
+					log(txRxMessage);
 				}
 				Thread.sleep(transmissionDelay);
 				ready = true;
@@ -39,6 +40,24 @@ public abstract class AbstractTransmitter extends Thread implements Transmitter 
 			exp.printStackTrace();
 		}
 
+	}
+	private void log(TxRxMessage txRxMessage) {
+		System.out.println(buildLogMessage(txRxMessage));
+	}
+
+	private String buildLogMessage(TxRxMessage txRxMessage) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("\n------------------------------------TRANSMIT::"+Command.getCommandByCommandId(txRxMessage.getCommandId())+"-----------------------------------");
+		sb.append("\n\tMessageId\t\t:\t"+txRxMessage.getMessageId());
+		sb.append("\n\tCommandId\t\t:\t"+txRxMessage.getCommandId());
+		sb.append("\n\tSender\t\t:\t"+txRxMessage.getSender());
+		sb.append("\n\tRecipient\t\t:\t"+txRxMessage.getRecipient());
+		sb.append("\n\tOriginalSender\t:\t"+txRxMessage.getOriginalSender());
+		sb.append("\n\tOriginalRecipient\t:\t"+txRxMessage.getOriginalRecipient());
+		sb.append("\n\tPayload\t\t:\t"+txRxMessage.getPayload());
+		sb.append("\n\t\t"+txRxMessage.getOriginalMessage());
+		sb.append("\n------------------------------------------------------------------------------");
+		return sb.toString();
 	}
 	public final boolean isReady() {
 		return ready;

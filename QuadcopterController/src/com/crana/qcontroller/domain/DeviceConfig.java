@@ -30,13 +30,8 @@ public class DeviceConfig implements Serializable {
 	private DeviceConfig edgeTerminalDevice;
 	@JsonIgnore
 	private Map<String, DeviceConfig> devices = new LinkedHashMap<String, DeviceConfig>();
-	@JsonProperty("lat")
-	private double latitude;
-	@JsonProperty("long")
-	private double longitude;
-	@JsonIgnore
-	private double distance;
-	
+	@JsonProperty("gpsLoc")
+	private GpsLocation gpsLocation;
 	public String getDeviceName() {
 		return deviceName;
 	}
@@ -73,26 +68,14 @@ public class DeviceConfig implements Serializable {
 	public void setDevices(Map<String, DeviceConfig> devices) {
 		this.devices = devices;
 	}
-	public double getLatitude() {
-		return latitude;
+	public GpsLocation getGpsLocation() {
+		return gpsLocation;
 	}
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
-	}
-	public double getLongitude() {
-		return longitude;
-	}
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
-	}
-	public double getDistance() {
-		return distance;
-	}
-	public void setDistance(double distance) {
-		this.distance = distance;
+	public void setGpsLocation(GpsLocation gpsLocation) {
+		this.gpsLocation = gpsLocation;
 	}
 	@Override
 	public String toString() {
-		return deviceName + " " + locomotionType + " is at " + distance + "Meter" ;
+		return deviceName + " " + locomotionType + " is at " + (gpsLocation != null?gpsLocation.getDistance():"") + "Meter" ;
 	}
 }

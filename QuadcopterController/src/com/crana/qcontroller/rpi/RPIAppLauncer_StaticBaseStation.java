@@ -31,14 +31,14 @@ import com.crana.qcontroller.service.Command;
  * @author ArunPrakash
  *
  */
-public class RPIAppLauncer extends Thread {
+public class RPIAppLauncer_StaticBaseStation extends Thread {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		try {
-			RPIAppLauncer rpiAppLauncer = new RPIAppLauncer();
+			RPIAppLauncer_StaticBaseStation rpiAppLauncer = new RPIAppLauncer_StaticBaseStation();
 			rpiAppLauncer.start();
 			rpiAppLauncer.join();
 		} catch (Exception e) {
@@ -54,46 +54,12 @@ public class RPIAppLauncer extends Thread {
 			Receiver receiver = initReceiver(myDeviceConfig, transmitter);
 			waitForReceiverIsToReady(receiver);
 			broadCastMyDeviceConfig(transmitter);
-			initDynamicGpsThread(myDeviceConfig);
 			System.out.println("RPI Started");
 		} catch (Exception exp) {
 			exp.printStackTrace();
 		}
-
 	}
-	private void initDynamicGpsThread(final DeviceConfig myDeviceConfig) {
-		Thread thread = new Thread() {
-			@SuppressWarnings("serial")
-			public void run() {
-				Map<Double, Double> latLonMap = new LinkedHashMap<Double, Double>() {{
-					put(12.839686068565335D, 78.81094217995053D);
-					put(12.54401688488115D, 77.42129701663487D);
-					put(11.568308578723343D, 76.6821240574244D);
-					put(10.829135619512883D, 77.18476166968752D);
-					put(9.631675425591936D, 77.40651355745065D);
-					put(10.651734109302373D, 77.87958425134535D);
-				}};
-				try {
-					List<Map.Entry<Double, Double>> listOfCoOridinates = new ArrayList<Map.Entry<Double, Double>>(latLonMap.entrySet());
-					int i = 0;
-					while (true) {
-						Thread.sleep(1000L);
-						Map.Entry<Double, Double> entry = listOfCoOridinates.get(i);
-						myDeviceConfig.getGpsLocation().setLatitude(entry.getKey());
-						myDeviceConfig.getGpsLocation().setLongitude(entry.getValue());
-						i++;
-						if (i == listOfCoOridinates.size()) {
-							i = 0;
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				
-			}
-		};
-		thread.start();
-	}
+	
 	private void broadCastMyDeviceConfig(Transmitter transmitter) {
 		transmitter.transmit(Command.INVITE);
 	}
@@ -111,11 +77,11 @@ public class RPIAppLauncer extends Thread {
 	private DeviceConfig loadMyDeviceConfig() throws Exception {
 		DeviceConfig myDeviceConfig = new DeviceConfig();
 		InputStream is = null;
-		File myDeviceConfigPropertyFile = new File(System.getProperty("user.home") + "\\rpi_device_default_config.properties");
+		File myDeviceConfigPropertyFile = new File(System.getProperty("user.home") + "\\rpi_device_default_config_static.properties");
 		if (myDeviceConfigPropertyFile.exists()) {
 			is = new FileInputStream(myDeviceConfigPropertyFile);
 		} else {
-			is = RPIAppLauncer.class.getResourceAsStream("/com/crana/qcontroller/rpi/resources/rpi_device_default_config.properties");
+			is = RPIAppLauncer_StaticBaseStation.class.getResourceAsStream("/com/crana/qcontroller/rpi/resources/rpi_device_default_config_static.properties");
 		}
 		Properties props = new Properties();
 		props.load(is);

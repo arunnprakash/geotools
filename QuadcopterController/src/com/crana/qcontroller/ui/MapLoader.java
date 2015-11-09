@@ -62,7 +62,7 @@ public void setDeviceConfig(DeviceConfig deviceConfig) {
 	initDevicesLayer();
 }
 	private void initDevicesLayer() {
-		deviceLocationPlotterLayer = new DeviceLocationPlotterLayer(20, deviceConfig.getLatitude(), deviceConfig.getLongitude());
+		deviceLocationPlotterLayer = new DeviceLocationPlotterLayer(20, deviceConfig.getGpsLocation().getLatitude(), deviceConfig.getGpsLocation().getLongitude());
 		mapContent.addLayer(deviceLocationPlotterLayer);
 	}
 	private SimpleFeatureSource initShapeLayer() throws IOException {

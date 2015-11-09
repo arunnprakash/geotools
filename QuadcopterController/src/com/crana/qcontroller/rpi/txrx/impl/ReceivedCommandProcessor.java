@@ -7,10 +7,13 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import com.crana.qcontroller.domain.DeviceConfig;
+import com.crana.qcontroller.domain.GpsLocation;
 import com.crana.qcontroller.domain.TxRxMessage;
 import com.crana.qcontroller.domain.TxRxMessageBuilder;
 import com.crana.qcontroller.rpi.txrx.Transmitter;
 import com.crana.qcontroller.service.Command;
+import com.crana.qcontroller.service.DistanceCalculator;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -45,13 +48,17 @@ public class ReceivedCommandProcessor extends Thread {
 		Command command = Command.getCommandByCommandId(message.getCommandId());
 		switch(command) {
 			case INVITE: {
-				Integer commandId = Command.INVITE_RESPONSE.getCommandId();
-				transmitter.transmit(buildResponse(commandId, message));
+				processInviteMessage(message);
+				break;
+			}
+			case INVITE_RESPONSE: {
+				processInviteResponse(message);
 				break;
 			}
 			case GET_GPS_LOCATION: {
-				Integer commandId = Command.INVITE_RESPONSE.getCommandId();
-				transmitter.transmit(buildResponse(commandId, message));
+				Integer commandId = Command.GPS_LOCATION_RESPONSE.getCommandId();
+				String payload = objectMapper.writeValueAsString(myDeviceConfig.getGpsLocation());
+				transmitter.transmit(buildResponse(commandId, message, payload));
 				break;
 			}
 			default: {
@@ -59,16 +66,47 @@ public class ReceivedCommandProcessor extends Thread {
 			}
 		}
 	}
-	private TxRxMessage buildResponse(Integer commandId, TxRxMessage receivedMessage) throws Exception {
+	private TxRxMessage buildResponse(Integer commandId, TxRxMessage receivedMessage, String payload) throws Exception {
 		TxRxMessage txRxMessage = TxRxMessageBuilder.txRxMessage()
 				.withCommandId(commandId)
 				.withSender(myDeviceConfig.getDeviceId())
 				.withRecipient(receivedMessage.getSender())
 				.withOriginalSender(myDeviceConfig.getDeviceId())
 				.withOriginalRecipient(receivedMessage.getOriginalSender())
-				.withPayload(objectMapper.writeValueAsString(myDeviceConfig))
+				.withPayload(payload)
 				.build();
 		return txRxMessage;
+	}
+	private void processInviteMessage(TxRxMessage message)
+			throws JsonProcessingException, Exception {
+		Integer commandId = Command.INVITE_RESPONSE.getCommandId();
+		String payload = objectMapper.writeValueAsString(myDeviceConfig);
+		transmitter.transmit(buildResponse(commandId, message, payload));
+		DeviceConfig deviceConfig = objectMapper.readValue(message.getPayload(), DeviceConfig.class);
+		myDeviceConfig.getDevices().put(deviceConfig.getDeviceId(), deviceConfig);
+		calculateDistance(deviceConfig.getGpsLocation());
+		setNeighbourDevice();
+	}
+	private void processInviteResponse(TxRxMessage message) throws Exception {
+		DeviceConfig deviceConfig = objectMapper.readValue(message.getPayload(), DeviceConfig.class);
+		myDeviceConfig.getDevices().put(deviceConfig.getDeviceId(), deviceConfig);
+		calculateDistance(deviceConfig.getGpsLocation());
+		setNeighbourDevice();
+	}
+	private void setNeighbourDevice() {
+		DeviceConfig myNeigbour = null;
+		for (String deviceId : myDeviceConfig.getDevices().keySet()) {
+			DeviceConfig deviceConfig = myDeviceConfig.getDevices().get(deviceId);
+			if (myNeigbour == null || deviceConfig.getGpsLocation().getDistance() < myNeigbour.getGpsLocation().getDistance()) {
+				myNeigbour = deviceConfig;
+			}
+		}
+		myDeviceConfig.setMyNeigbour(myNeigbour);
+	}
+	private void calculateDistance(GpsLocation gpsLocation) {
+		double distance = DistanceCalculator.distance(myDeviceConfig.getGpsLocation().getLatitude(), myDeviceConfig.getGpsLocation().getLongitude(), 
+				gpsLocation.getLatitude(), gpsLocation.getLongitude(), 8, 8);
+		gpsLocation.setDistance(distance);
 	}
 	public void addToMessageProcessorQueue(TxRxMessage message) {
 		messageQueue.add(message);

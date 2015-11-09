@@ -7,20 +7,21 @@ import com.crana.qcontroller.domain.DeviceConfig;
 import com.crana.qcontroller.domain.TxRxMessage;
 import com.crana.qcontroller.domain.TxRxMessageBuilder;
 import com.crana.qcontroller.service.Command;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TransmitCommandProcessor extends Thread {
 	private DeviceConfig myDeviceConfig;
 	private Integer messageId = new Integer(1);
 	private boolean stopTransmitter = false;
 	private Queue<TxRxMessage> messageQueue = new LinkedList<TxRxMessage>();
-	
+	private ObjectMapper objectMapper = new ObjectMapper();
 	public TransmitCommandProcessor(DeviceConfig myDeviceConfig) {
 		this.myDeviceConfig = myDeviceConfig;
 	}
-	public TxRxMessage getMessage(Command command) {
+	public TxRxMessage getMessage(Command command) throws Exception {
 		return process(command);
 	}
-	private TxRxMessage process(Command command) {
+	private TxRxMessage process(Command command) throws Exception {
 		switch(command) {
 			case INVITE: {
 				return buildInviteMessage(command.getCommandId());
@@ -29,19 +30,19 @@ public class TransmitCommandProcessor extends Thread {
 				return buildMessage(command.getCommandId());
 			}
 			default: {
-				throw new IllegalArgumentException("No Implmentation found in TransmitCommandProcessor for Command::"+command.name());
+				throw new IllegalArgumentException("No Implementation found in TransmitCommandProcessor for Command::"+command.name());
 			}
 		}
 	}
-	private TxRxMessage buildInviteMessage(int commandId) {
+	private TxRxMessage buildInviteMessage(int commandId) throws Exception {
 		TxRxMessage txRxMessage = TxRxMessageBuilder.txRxMessage()
 				.withMessageId(messageId++)
 				.withCommandId(commandId)
 				.withSender(myDeviceConfig.getDeviceId())
 				.withRecipient(null)
 				.withOriginalSender(myDeviceConfig.getDeviceId())
-				.withOriginalRecipient("")
-				.withPayload(null)
+				.withOriginalRecipient(null)
+				.withPayload(objectMapper.writeValueAsString(myDeviceConfig))
 				.build();
 		return txRxMessage;
 	}
@@ -66,5 +67,7 @@ public class TransmitCommandProcessor extends Thread {
 	public void stopTransmitter() {
 		this.stopTransmitter = true;
 	}
-
+	public void setMessageId(TxRxMessage message) {
+		message.setMessageId(messageId++);
+	}
 }

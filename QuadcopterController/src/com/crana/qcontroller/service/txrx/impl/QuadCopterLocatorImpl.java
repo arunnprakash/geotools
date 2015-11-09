@@ -24,6 +24,7 @@ public class QuadCopterLocatorImpl extends Thread implements QuadCopterLocator {
 		try {
 			while (true) {
 				while (!stopLocator) {
+					System.out.println("Before Tranmit Get Gps Location");
 					transmitter.transmit(Command.GET_GPS_LOCATION);
 					Thread.sleep(1000);
 				}
@@ -36,6 +37,7 @@ public class QuadCopterLocatorImpl extends Thread implements QuadCopterLocator {
 
 	@Override
 	public void startTracking() {
+		System.out.println("startTracking Via GpsLocator");
 		stopLocator = false;
 		this.start();
 	}
