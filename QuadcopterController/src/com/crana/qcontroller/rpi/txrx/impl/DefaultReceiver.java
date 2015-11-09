@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 
 import com.crana.qcontroller.domain.DeviceConfig;
 import com.crana.qcontroller.domain.TxRxMessage;
@@ -12,25 +15,22 @@ import com.crana.qcontroller.rpi.txrx.Transmitter;
 
 public class DefaultReceiver extends AbstractReceiver {
 
-	private BufferedReader br;
 	private TxRxMessageBoundaryValueBuilder txrxMessageBoundaryValueBuilder;
+	private DeviceConfig myDeviceConfig;
 	public DefaultReceiver(DeviceConfig myDeviceConfig, Transmitter transmitter) throws Exception {
 		super(myDeviceConfig, transmitter);
+		this.myDeviceConfig = myDeviceConfig;
 		txrxMessageBoundaryValueBuilder = new TxRxMessageBoundaryValueBuilder();
 		initStream();
 	}
 
 	private void initStream() throws Exception {
-		if (br == null) {
-			File file = new File(System.getProperty("user.home") + "\\tx.txt");
-			if (file.exists()) {
-				file.delete();
-				file.createNewFile();
-			} else {
-				file.createNewFile();
-			}
-			InputStream fis = new FileInputStream(file);
-			br = new BufferedReader(new InputStreamReader(fis));
+		File file = new File(System.getProperty("user.home") + "\\" + myDeviceConfig.getDeviceId() + ".txt");
+		if (file.exists()) {
+			file.delete();
+			file.createNewFile();
+		} else {
+			file.createNewFile();
 		}
 	}
 
@@ -48,18 +48,14 @@ public class DefaultReceiver extends AbstractReceiver {
 	}
 
 	private String readFromFile() throws Exception  {
-
-		return br.readLine();
-	}
-
-	public void finalize() {
-		if (br != null) {
-			try {
-				br.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-		}
+		File file = new File(System.getProperty("user.home") + "\\" + myDeviceConfig.getDeviceId() + ".txt");
+		FileInputStream fis = new FileInputStream(file);
+		FileLock lock = fis.getChannel().lock();
+		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+		String lineOfString = br.readLine();
+		lock.release();
+		br.close();
+		fis.close();
+		return lineOfString;
 	}
 }

@@ -43,7 +43,6 @@ public abstract class AbstractTransmitter extends Thread implements Transmitter 
 		} catch (Exception exp) {
 			exp.printStackTrace();
 		}
-
 	}
 	public final boolean isReady() {
 		return ready;

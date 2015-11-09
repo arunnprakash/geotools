@@ -114,13 +114,13 @@ public class AppLauncher extends JFrame {
 			private QControllerMainWindow createQControllerMainWindow(DeviceConfig myDeviceConfig) throws Exception {
 				return new QControllerMainWindow(myDeviceConfig);
 			}
-			private Transmitter initTransmitter(QControllerMainWindow window, DeviceConfig myDeviceConfig) {
+			private Transmitter initTransmitter(QControllerMainWindow window, DeviceConfig myDeviceConfig) throws Exception {
 				Transmitter transmitter = new DefaultTransmitter(myDeviceConfig, window.getTxRxLogger().getTxMessageLogger());
 				transmitter.startTransmitter();
 				window.setTransmitter(transmitter);
 				return transmitter;
 			}
-			private Receiver initReceiver(DeviceConfig myDeviceConfig, Transmitter transmitter, QControllerMainWindow window) {
+			private Receiver initReceiver(DeviceConfig myDeviceConfig, Transmitter transmitter, QControllerMainWindow window) throws Exception {
 				Receiver receiver = new DefaultReceiver(myDeviceConfig, transmitter, window);
 				receiver.startReceiver();
 				return receiver;

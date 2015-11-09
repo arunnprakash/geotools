@@ -26,6 +26,9 @@ public class TransmitCommandProcessor extends Thread {
 			case INVITE: {
 				return buildInviteMessage(command.getCommandId());
 			}
+			case GET_GPS_LOCATION: {
+				return buildGetGpsLocationMessage(command.getCommandId());
+			}
 			case START: {
 				return buildMessage(command.getCommandId());
 			}
@@ -43,6 +46,18 @@ public class TransmitCommandProcessor extends Thread {
 				.withOriginalSender(myDeviceConfig.getDeviceId())
 				.withOriginalRecipient(null)
 				.withPayload(objectMapper.writeValueAsString(myDeviceConfig))
+				.build();
+		return txRxMessage;
+	}
+	private TxRxMessage buildGetGpsLocationMessage(int commandId) {
+		TxRxMessage txRxMessage = TxRxMessageBuilder.txRxMessage()
+				.withMessageId(messageId++)
+				.withCommandId(commandId)
+				.withSender(myDeviceConfig.getDeviceId())
+				.withRecipient(myDeviceConfig.getMyNeigbour().getDeviceId())
+				.withOriginalSender(myDeviceConfig.getDeviceId())
+				.withOriginalRecipient("")
+				.withPayload("")
 				.build();
 		return txRxMessage;
 	}

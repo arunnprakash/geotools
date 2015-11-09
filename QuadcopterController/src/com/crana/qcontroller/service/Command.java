@@ -10,8 +10,7 @@ package com.crana.qcontroller.service;
 public enum Command {
 	INVITE(1),
 	GET_GPS_LOCATION(2),
-	
-	START(2),
+	START(3),
 	INVITE_RESPONSE(35), 
 	GPS_LOCATION_RESPONSE(36);
 
