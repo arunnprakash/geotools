@@ -6,7 +6,6 @@ import com.crana.qcontroller.service.Command;
 import com.crana.qcontroller.service.txrx.Receiver;
 import com.crana.qcontroller.service.txrx.Transmitter;
 import com.crana.qcontroller.ui.ControllerUI;
-import com.crana.qcontroller.ui.QControllerMainWindow;
 
 public abstract class AbstractReceiver extends Thread implements Receiver {
 	private boolean ready = false;

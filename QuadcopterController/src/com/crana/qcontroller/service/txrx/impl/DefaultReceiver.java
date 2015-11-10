@@ -4,13 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.nio.channels.FileLock;
 
 import com.crana.qcontroller.domain.DeviceConfig;
 import com.crana.qcontroller.domain.TxRxMessage;
 import com.crana.qcontroller.service.txrx.Transmitter;
 import com.crana.qcontroller.ui.ControllerUI;
-import com.crana.qcontroller.ui.QControllerMainWindow;
 
 public class DefaultReceiver extends AbstractReceiver {
 

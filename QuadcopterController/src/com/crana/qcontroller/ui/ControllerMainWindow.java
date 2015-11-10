@@ -17,7 +17,7 @@ import com.crana.qcontroller.service.txrx.Transmitter;
  * @author ArunPrakash
  *
  */
-public class QControllerMainWindow implements ControllerUI {
+public class ControllerMainWindow implements ControllerUI {
 
 	private JFrame mainWindowFrame;
 	private TxRxLogPanel txRxLogPanel;
@@ -29,11 +29,11 @@ public class QControllerMainWindow implements ControllerUI {
 	 * Create the application.
 	 * @throws Exception 
 	 */
-	public QControllerMainWindow() throws Exception {
+	public ControllerMainWindow() throws Exception {
 		initialize();
 	}
 
-	public QControllerMainWindow(DeviceConfig myDeviceConfig) throws Exception {
+	public ControllerMainWindow(DeviceConfig myDeviceConfig) throws Exception {
 		this();
 		this.myDeviceConfig = myDeviceConfig;
 		myDeviceConfigPanel.setMyDeviceConfig(myDeviceConfig);

@@ -53,7 +53,7 @@ public class AppLauncher extends JFrame {
 					appLauncer.setStatus("Loading My Device Configuration...");
 					DeviceConfig myDeviceConfig = loadMyDeviceConfig();
 					appLauncer.setStatus("Loading QuadCopter Controller Window...");
-					QControllerMainWindow window = createQControllerMainWindow(myDeviceConfig);
+					ControllerMainWindow window = createQControllerMainWindow(myDeviceConfig);
 					appLauncer.setProgress(30);
 					appLauncer.setStatus("Initialize Transmitter...");
 					
@@ -113,8 +113,8 @@ public class AppLauncher extends JFrame {
 				is.close();
 				return myDeviceConfig;
 			}
-			private QControllerMainWindow createQControllerMainWindow(DeviceConfig myDeviceConfig) throws Exception {
-				return new QControllerMainWindow(myDeviceConfig);
+			private ControllerMainWindow createQControllerMainWindow(DeviceConfig myDeviceConfig) throws Exception {
+				return new ControllerMainWindow(myDeviceConfig);
 			}
 			private Transmitter initTransmitter(DeviceConfig myDeviceConfig, ControllerUI controllerUI) throws Exception {
 				Transmitter transmitter = new DefaultTransmitter(myDeviceConfig, controllerUI);
