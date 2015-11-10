@@ -24,15 +24,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ReceivedCommandProcessor extends Thread {
 	private boolean stopReceiver = false;
 	private long receiverDelay = 1000;
-	private Queue<TxRxMessage> messageQueue = new LinkedList<TxRxMessage>();
-	private QControllerMainWindow mainWindow;
 	private Transmitter transmitter;
 	private DeviceConfig myDeviceConfig;
+	private Queue<TxRxMessage> messageQueue = new LinkedList<TxRxMessage>();
 	private ObjectMapper objectMapper = new ObjectMapper();
+	private QControllerMainWindow mainWindow;
 	public ReceivedCommandProcessor(DeviceConfig myDeviceConfig, Transmitter transmitter, QControllerMainWindow mainWindow) {
-		this.mainWindow = mainWindow;
 		this.myDeviceConfig = myDeviceConfig;
 		this.transmitter = transmitter;
+		this.mainWindow = mainWindow;
 	}
 	public void run() {
 		try {
@@ -50,12 +50,21 @@ public class ReceivedCommandProcessor extends Thread {
 	private void process(TxRxMessage message) throws Exception {
 		Command command = Command.getCommandByCommandId(message.getCommandId());
 		switch(command) {
+			case START: {
+				break;
+			}
 			case INVITE: {
 				processInviteMessage(message);
 				break;
 			}
 			case INVITE_RESPONSE: {
 				processInviteResponse(message);
+				break;
+			}
+			case GET_GPS_LOCATION: {
+				Integer commandId = Command.GPS_LOCATION_RESPONSE.getCommandId();
+				String payload = objectMapper.writeValueAsString(myDeviceConfig.getGpsLocation());
+				transmitter.transmit(buildResponse(commandId, message, payload));
 				break;
 			}
 			case GPS_LOCATION_RESPONSE: {
@@ -67,20 +76,31 @@ public class ReceivedCommandProcessor extends Thread {
 			}
 		}
 	}
+	private TxRxMessage buildResponse(Integer commandId, TxRxMessage receivedMessage, String payload) throws Exception {
+		TxRxMessage txRxMessage = TxRxMessageBuilder.txRxMessage()
+				.withCommandId(commandId)
+				.withSender(myDeviceConfig.getDeviceId())
+				.withRecipient(receivedMessage.getSender())
+				.withOriginalSender(myDeviceConfig.getDeviceId())
+				.withOriginalRecipient(receivedMessage.getOriginalSender())
+				.withPayload(payload)
+				.build();
+		return txRxMessage;
+	}
 	private void processGpsLocationResponse(TxRxMessage message) throws Exception {
 		GpsLocation gpsLocation = objectMapper.readValue(message.getPayload(), GpsLocation.class);
 		calculateDistance(gpsLocation);
 	}
 	private void processInviteMessage(TxRxMessage message)
 			throws JsonProcessingException, Exception {
+		Integer commandId = Command.INVITE_RESPONSE.getCommandId();
+		String payload = objectMapper.writeValueAsString(myDeviceConfig);
+		transmitter.transmit(buildResponse(commandId, message, payload));
 		DeviceConfig deviceConfig = objectMapper.readValue(message.getPayload(), DeviceConfig.class);
 		myDeviceConfig.getDevices().put(deviceConfig.getDeviceId(), deviceConfig);
 		calculateDistance(deviceConfig.getGpsLocation());
 		setNeighbourDevice();
 		mainWindow.addNeighbourDevice(deviceConfig);
-		Integer commandId = Command.INVITE_RESPONSE.getCommandId();
-		String payload = objectMapper.writeValueAsString(myDeviceConfig);
-		transmitter.transmit(buildResponse(commandId, message, payload));
 	}
 	private void processInviteResponse(TxRxMessage message) throws Exception {
 		DeviceConfig deviceConfig = objectMapper.readValue(message.getPayload(), DeviceConfig.class);
@@ -103,17 +123,6 @@ public class ReceivedCommandProcessor extends Thread {
 		double distance = DistanceCalculator.distance(myDeviceConfig.getGpsLocation().getLatitude(), myDeviceConfig.getGpsLocation().getLongitude(), 
 				gpsLocation.getLatitude(), gpsLocation.getLongitude(), 8, 8);
 		gpsLocation.setDistance(distance);
-	}
-	private TxRxMessage buildResponse(Integer commandId, TxRxMessage receivedMessage, String payload) throws Exception {
-		TxRxMessage txRxMessage = TxRxMessageBuilder.txRxMessage()
-				.withCommandId(commandId)
-				.withSender(myDeviceConfig.getDeviceId())
-				.withRecipient(receivedMessage.getSender())
-				.withOriginalSender(myDeviceConfig.getDeviceId())
-				.withOriginalRecipient(receivedMessage.getOriginalSender())
-				.withPayload(payload)
-				.build();
-		return txRxMessage;
 	}
 	public void addToMessageProcessorQueue(TxRxMessage message) {
 		messageQueue.add(message);

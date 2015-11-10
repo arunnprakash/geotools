@@ -47,6 +47,9 @@ public class ReceivedCommandProcessor extends Thread {
 	private void process(TxRxMessage message) throws Exception {
 		Command command = Command.getCommandByCommandId(message.getCommandId());
 		switch(command) {
+			case START: {
+				break;
+			}
 			case INVITE: {
 				processInviteMessage(message);
 				break;
@@ -59,6 +62,10 @@ public class ReceivedCommandProcessor extends Thread {
 				Integer commandId = Command.GPS_LOCATION_RESPONSE.getCommandId();
 				String payload = objectMapper.writeValueAsString(myDeviceConfig.getGpsLocation());
 				transmitter.transmit(buildResponse(commandId, message, payload));
+				break;
+			}
+			case GPS_LOCATION_RESPONSE: {
+				processGpsLocationResponse(message);
 				break;
 			}
 			default: {
@@ -76,6 +83,10 @@ public class ReceivedCommandProcessor extends Thread {
 				.withPayload(payload)
 				.build();
 		return txRxMessage;
+	}
+	private void processGpsLocationResponse(TxRxMessage message) throws Exception {
+		GpsLocation gpsLocation = objectMapper.readValue(message.getPayload(), GpsLocation.class);
+		calculateDistance(gpsLocation);
 	}
 	private void processInviteMessage(TxRxMessage message)
 			throws JsonProcessingException, Exception {
