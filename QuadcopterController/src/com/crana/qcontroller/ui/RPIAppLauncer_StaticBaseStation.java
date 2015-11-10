@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.crana.qcontroller.rpi;
+package com.crana.qcontroller.ui;
 
 import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_ID_KEY;
 import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_LATITUDE_KEY;

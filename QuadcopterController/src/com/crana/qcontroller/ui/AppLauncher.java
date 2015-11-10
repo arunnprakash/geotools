@@ -56,7 +56,7 @@ public class AppLauncher extends JFrame {
 					appLauncer.setProgress(30);
 					appLauncer.setStatus("Initialize Transmitter...");
 					
-					Transmitter transmitter = initTransmitter(window, myDeviceConfig);
+					Transmitter transmitter = initTransmitter(myDeviceConfig, window);
 					waitForTransmitterIsToReady(transmitter);
 					appLauncer.setProgress(50);
 					
@@ -93,11 +93,11 @@ public class AppLauncher extends JFrame {
 			private DeviceConfig loadMyDeviceConfig() throws Exception {
 				DeviceConfig myDeviceConfig = new DeviceConfig();
 				InputStream is = null;
-				File myDeviceConfigPropertyFile = new File(System.getProperty("user.home") + "\\device_default_config.properties");
+				File myDeviceConfigPropertyFile = new File(System.getProperty("user.home") + "\\main_base_station_device_default_config.properties");
 				if (myDeviceConfigPropertyFile.exists()) {
 					is = new FileInputStream(myDeviceConfigPropertyFile);
 				} else {
-					is = AppLauncher.class.getResourceAsStream("/com/crana/qcontroller/resources/device_default_config.properties");
+					is = AppLauncher.class.getResourceAsStream("/com/crana/qcontroller/resources/main_base_station_device_default_config.properties");
 				}
 				Properties props = new Properties();
 				props.load(is);
@@ -114,14 +114,14 @@ public class AppLauncher extends JFrame {
 			private QControllerMainWindow createQControllerMainWindow(DeviceConfig myDeviceConfig) throws Exception {
 				return new QControllerMainWindow(myDeviceConfig);
 			}
-			private Transmitter initTransmitter(QControllerMainWindow window, DeviceConfig myDeviceConfig) throws Exception {
-				Transmitter transmitter = new DefaultTransmitter(myDeviceConfig, window.getTxRxLogger().getTxMessageLogger());
+			private Transmitter initTransmitter(DeviceConfig myDeviceConfig, ControllerUI controllerUI) throws Exception {
+				Transmitter transmitter = new DefaultTransmitter(myDeviceConfig, controllerUI);
 				transmitter.startTransmitter();
-				window.setTransmitter(transmitter);
+				controllerUI.setTransmitter(transmitter);
 				return transmitter;
 			}
-			private Receiver initReceiver(DeviceConfig myDeviceConfig, Transmitter transmitter, QControllerMainWindow window) throws Exception {
-				Receiver receiver = new DefaultReceiver(myDeviceConfig, transmitter, window);
+			private Receiver initReceiver(DeviceConfig myDeviceConfig, Transmitter transmitter, ControllerUI controllerUI) throws Exception {
+				Receiver receiver = new DefaultReceiver(myDeviceConfig, transmitter, controllerUI);
 				receiver.startReceiver();
 				return receiver;
 			}

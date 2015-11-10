@@ -34,8 +34,6 @@ public abstract class AbstractReceiver extends Thread implements Receiver {
 		}
 	}
 	private boolean isForMe(TxRxMessage message) {
-		System.out.println("message::"+message);
-		System.out.println("myDeviceConfig::"+myDeviceConfig);
 		return message.getRecipient() == null 
 				|| message.getRecipient().equalsIgnoreCase(myDeviceConfig.getDeviceId()) 
 				|| message.getOriginalRecipient().equalsIgnoreCase(myDeviceConfig.getDeviceId());

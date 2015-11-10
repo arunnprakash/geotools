@@ -9,16 +9,15 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.UUID;
 
-import javax.swing.JTextPane;
-
 import com.crana.qcontroller.domain.DeviceConfig;
 import com.crana.qcontroller.domain.TxRxMessage;
+import com.crana.qcontroller.ui.ControllerUI;
 
 public class DefaultTransmitter extends AbstractTransmitter {
 	private TxRxMessageBoundaryValueBuilder txrxMessageBoundaryValueBuilder;
 	private DeviceConfig myDeviceConfig;
-	public DefaultTransmitter(DeviceConfig myDeviceConfig, JTextPane txMessageLogger) {
-		super(myDeviceConfig, txMessageLogger);
+	public DefaultTransmitter(DeviceConfig myDeviceConfig, ControllerUI controllerUI) {
+		super(myDeviceConfig, controllerUI);
 		this.myDeviceConfig = myDeviceConfig;
 		txrxMessageBoundaryValueBuilder = new TxRxMessageBoundaryValueBuilder();
 	}
@@ -38,11 +37,9 @@ public class DefaultTransmitter extends AbstractTransmitter {
 
 	private void writeToFile(String transmissionMessage, String receipient) throws IOException {
 		if (receipient != null && !receipient.trim().isEmpty()) {
-			System.out.println("Writing on::" + receipient);
 			File file = new File(System.getProperty("user.home") + "\\" + receipient + ".txt");
 			writeToFile(transmissionMessage, file);
 		} else {
-			System.out.println("Receipient is Null");
 			File rootDirectory = new File(System.getProperty("user.home"));
 			File[] files = rootDirectory.listFiles(new FilenameFilter(){
 				@Override
@@ -50,7 +47,6 @@ public class DefaultTransmitter extends AbstractTransmitter {
 					try {
 						String fileName = name.split("\\.")[0];
 						UUID uuid = UUID.fromString(fileName);
-						System.out.println("fileNameUUID::"+uuid);
 						return uuid != null && !uuid.toString().equalsIgnoreCase(myDeviceConfig.getDeviceId());
 					} catch (Exception e) {
 						return false;
@@ -59,7 +55,6 @@ public class DefaultTransmitter extends AbstractTransmitter {
 			});
 			if (files != null && files.length > 0) {
 				for (int i = 0; i < files.length; i++) {
-					System.out.println("Writing on::"+files[i].getName());
 					writeToFile(transmissionMessage, files[i]);
 				}
 			}

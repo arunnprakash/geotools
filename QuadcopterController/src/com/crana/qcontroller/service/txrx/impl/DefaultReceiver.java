@@ -9,6 +9,7 @@ import java.nio.channels.FileLock;
 import com.crana.qcontroller.domain.DeviceConfig;
 import com.crana.qcontroller.domain.TxRxMessage;
 import com.crana.qcontroller.service.txrx.Transmitter;
+import com.crana.qcontroller.ui.ControllerUI;
 import com.crana.qcontroller.ui.QControllerMainWindow;
 
 public class DefaultReceiver extends AbstractReceiver {
@@ -17,8 +18,8 @@ public class DefaultReceiver extends AbstractReceiver {
 	private DeviceConfig myDeviceConfig;
 	private FileInputStream fis;
 	private BufferedReader br;
-	public DefaultReceiver(DeviceConfig myDeviceConfig, Transmitter transmitter, QControllerMainWindow mainWindow) throws Exception {
-		super(myDeviceConfig, transmitter, mainWindow);
+	public DefaultReceiver(DeviceConfig myDeviceConfig, Transmitter transmitter, ControllerUI controllerUI) throws Exception {
+		super(myDeviceConfig, transmitter, controllerUI);
 		this.myDeviceConfig = myDeviceConfig;
 		txrxMessageBoundaryValueBuilder = new TxRxMessageBoundaryValueBuilder();
 		initStream();

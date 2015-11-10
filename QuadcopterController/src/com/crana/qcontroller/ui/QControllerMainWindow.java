@@ -17,7 +17,7 @@ import com.crana.qcontroller.service.txrx.Transmitter;
  * @author ArunPrakash
  *
  */
-public class QControllerMainWindow {
+public class QControllerMainWindow implements ControllerUI {
 
 	private JFrame mainWindowFrame;
 	private TxRxLogPanel txRxLogPanel;
@@ -94,16 +94,25 @@ public class QControllerMainWindow {
 		return mainWindowFrame;
 	}
 
-	public TxRxLogPanel getTxRxLogger() {
-		return txRxLogPanel;
-	}
 
+	@Override
 	public void setTransmitter(Transmitter transmitter) {
 		mapPanel.setTransmitter(transmitter);
 	}
 
+	@Override
 	public void addNeighbourDevice(DeviceConfig deviceConfig) {
 		myDeviceConfigPanel.addNeighbourDevice(deviceConfig);
 		mapPanel.getCommandPanel().getQuadCopterPicker().updateQuadCopterList();
+	}
+
+	@Override
+	public void logTransmissionMessage(String logMessage) {
+		txRxLogPanel.getTxMessageLogger().setText(txRxLogPanel.getTxMessageLogger().getText() + logMessage);
+	}
+
+	@Override
+	public void logReceivedMessage(String logMessage) {
+		txRxLogPanel.getRxMessageLogger().setText(txRxLogPanel.getRxMessageLogger().getText() + logMessage);
 	}
 }

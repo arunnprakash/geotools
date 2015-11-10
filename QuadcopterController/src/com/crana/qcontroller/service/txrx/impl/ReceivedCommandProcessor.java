@@ -13,7 +13,7 @@ import com.crana.qcontroller.domain.TxRxMessageBuilder;
 import com.crana.qcontroller.service.Command;
 import com.crana.qcontroller.service.DistanceCalculator;
 import com.crana.qcontroller.service.txrx.Transmitter;
-import com.crana.qcontroller.ui.QControllerMainWindow;
+import com.crana.qcontroller.ui.ControllerUI;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,11 +28,11 @@ public class ReceivedCommandProcessor extends Thread {
 	private DeviceConfig myDeviceConfig;
 	private Queue<TxRxMessage> messageQueue = new LinkedList<TxRxMessage>();
 	private ObjectMapper objectMapper = new ObjectMapper();
-	private QControllerMainWindow mainWindow;
-	public ReceivedCommandProcessor(DeviceConfig myDeviceConfig, Transmitter transmitter, QControllerMainWindow mainWindow) {
+	private ControllerUI controllerUI;
+	public ReceivedCommandProcessor(DeviceConfig myDeviceConfig, Transmitter transmitter, ControllerUI controllerUI) {
 		this.myDeviceConfig = myDeviceConfig;
 		this.transmitter = transmitter;
-		this.mainWindow = mainWindow;
+		this.controllerUI = controllerUI;
 	}
 	public void run() {
 		try {
@@ -100,14 +100,18 @@ public class ReceivedCommandProcessor extends Thread {
 		myDeviceConfig.getDevices().put(deviceConfig.getDeviceId(), deviceConfig);
 		calculateDistance(deviceConfig.getGpsLocation());
 		setNeighbourDevice();
-		mainWindow.addNeighbourDevice(deviceConfig);
+		if (controllerUI != null) {
+			controllerUI.addNeighbourDevice(deviceConfig);
+		}
 	}
 	private void processInviteResponse(TxRxMessage message) throws Exception {
 		DeviceConfig deviceConfig = objectMapper.readValue(message.getPayload(), DeviceConfig.class);
 		myDeviceConfig.getDevices().put(deviceConfig.getDeviceId(), deviceConfig);
 		calculateDistance(deviceConfig.getGpsLocation());
 		setNeighbourDevice();
-		mainWindow.addNeighbourDevice(deviceConfig);
+		if (controllerUI != null) {
+			controllerUI.addNeighbourDevice(deviceConfig);
+		}
 	}
 	private void setNeighbourDevice() {
 		DeviceConfig myNeigbour = null;
