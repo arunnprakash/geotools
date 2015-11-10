@@ -38,6 +38,7 @@ public class QControllerMainWindow implements ControllerUI {
 		this.myDeviceConfig = myDeviceConfig;
 		myDeviceConfigPanel.setMyDeviceConfig(myDeviceConfig);
 		mapPanel.setMyDeviceConfig(myDeviceConfig);
+		mainWindowFrame.setTitle(myDeviceConfig.getDeviceName());
 	}
 
 	/**
