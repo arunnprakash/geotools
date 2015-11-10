@@ -22,6 +22,8 @@ public class DeviceConfig implements Serializable {
 	private String deviceName;
 	@JsonProperty("dI")
 	private String deviceId;
+	@JsonProperty("bs")
+	private boolean baseStation;
 	@JsonProperty("lT")
 	private DeviceLocomotionType locomotionType;
 	@JsonIgnore
@@ -43,6 +45,12 @@ public class DeviceConfig implements Serializable {
 	}
 	public void setDeviceId(String deviceId) {
 		this.deviceId = deviceId;
+	}
+	public boolean isBaseStation() {
+		return baseStation;
+	}
+	public void setBaseStation(boolean baseStation) {
+		this.baseStation = baseStation;
 	}
 	public DeviceLocomotionType getLocomotionType() {
 		return locomotionType;

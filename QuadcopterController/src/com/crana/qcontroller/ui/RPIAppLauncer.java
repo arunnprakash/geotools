@@ -22,6 +22,7 @@ import javax.swing.JProgressBar;
 import javax.swing.border.EmptyBorder;
 
 import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_ID_KEY;
+import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_IS_BASE_STATION_KEY;
 import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_LOCOMOTION_TYPE_KEY;
 import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_NAME_KEY;
 import static com.crana.qcontroller.service.MyDeviceConfigKeyConstant.DEVICE_LATITUDE_KEY;
@@ -140,6 +141,7 @@ public class RPIAppLauncer extends JFrame {
 				props.load(is);
 				myDeviceConfig.setDeviceName(props.getProperty(DEVICE_NAME_KEY));
 				myDeviceConfig.setDeviceId(props.getProperty(DEVICE_ID_KEY));
+				myDeviceConfig.setBaseStation(Boolean.parseBoolean(props.getProperty(DEVICE_IS_BASE_STATION_KEY)));
 				GpsLocation gpsLocation = new GpsLocation();
 				gpsLocation.setLatitude(Double.parseDouble(props.getProperty(DEVICE_LATITUDE_KEY)));
 				gpsLocation.setLongitude(Double.parseDouble(props.getProperty(DEVICE_LONGITUDE_KEY)));

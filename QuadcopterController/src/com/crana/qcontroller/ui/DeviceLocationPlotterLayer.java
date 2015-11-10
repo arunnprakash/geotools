@@ -6,14 +6,18 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.DirectLayer;
 import org.geotools.map.MapContent;
 import org.geotools.map.MapViewport;
-import org.geotools.map.event.MapLayerEvent;
 
+import com.crana.qcontroller.domain.DeviceConfig;
+import com.crana.qcontroller.domain.DeviceLocomotionType;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -26,21 +30,19 @@ public class DeviceLocationPlotterLayer extends DirectLayer {
 	private GeometryFactory geometryFactory= JTSFactoryFinder.getGeometryFactory(null);
 	boolean graphicsInitialized = false;
 	private double diameter = 20;
-	private Point circleCenterPoint;
-
+	private DeviceConfig myDeviceConfig;
+	
 	private Graphics2D graphics;
 	private MapContent map;
 	private MapViewport mapViewPort;
-	public DeviceLocationPlotterLayer(double diameter, Point circleCenterPoint) {
-		super();
+
+	public DeviceLocationPlotterLayer(int diameter, DeviceConfig myDeviceConfig) {
 		this.diameter = diameter;
-		this.circleCenterPoint = circleCenterPoint;
+		this.myDeviceConfig = myDeviceConfig;
 	}
 
-	public DeviceLocationPlotterLayer(double diameter, double latitude, double longitude) {
-		super();
-		this.diameter = diameter;
-		this.circleCenterPoint = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+	private Point createCoOridinationPoint(DeviceConfig deviceConfig) {
+		return geometryFactory.createPoint(new Coordinate(deviceConfig.getGpsLocation().getLongitude(), deviceConfig.getGpsLocation().getLatitude()));
 	}
 
 	/* (non-Javadoc)
@@ -52,14 +54,32 @@ public class DeviceLocationPlotterLayer extends DirectLayer {
 		this.map = map;
 		this.mapViewPort = mapViewPort;
 		AffineTransform worldToScreen = mapViewPort.getWorldToScreen();
-		Point2D worldPoint = new Point2D.Double(circleCenterPoint.getX(), circleCenterPoint.getY());
+		createCircle(graphics, worldToScreen, myDeviceConfig);
+		for (Map.Entry<String, DeviceConfig> deviceEntry : myDeviceConfig.getDevices().entrySet()) {
+			DeviceConfig deviceConfig = deviceEntry.getValue();
+			createCircle(graphics, worldToScreen, deviceConfig);
+		}
+		graphicsInitialized = true;
+	}
+
+	private void createCircle(Graphics2D graphics, AffineTransform worldToScreen, DeviceConfig deviceConfig) {
+		Point device = createCoOridinationPoint(deviceConfig);
+		Point2D worldPoint = new Point2D.Double(device.getX(), device.getY());
 		Point2D screenPoint = worldToScreen.transform(worldPoint, null);
 		Shape theCircle = new Ellipse2D.Double(screenPoint.getX() - diameter/2, screenPoint.getY() - diameter/2, diameter, diameter);
-        graphics.draw(theCircle);
-        graphics.setColor(Color.BLUE);
-        graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float) .5));
-        graphics.fill(theCircle);
-        graphicsInitialized = true;
+		graphics.draw(theCircle);
+		if (deviceConfig.getLocomotionType().equals(DeviceLocomotionType.STATIC)){
+			if (deviceConfig.isBaseStation()) {
+				graphics.setColor(Color.GREEN);
+			} else {
+				graphics.setColor(Color.BLUE);
+			}
+		} else {
+			graphics.setColor(Color.RED);
+		}
+		
+		graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float) .5));
+		graphics.fill(theCircle);
 	}
 
 	/* (non-Javadoc)
@@ -71,30 +91,12 @@ public class DeviceLocationPlotterLayer extends DirectLayer {
 		return null;
 	}
 	
-	public void setCenterPoint(double latitude, double longitude) {
-		System.out.println("setCenterPoint");
-		this.circleCenterPoint = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+	public void updateUI() {
 		if (graphicsInitialized) {
-			refresh();
+			graphics.setColor(Color.WHITE);
+			graphics.clearRect((int)graphics.getClipBounds().getMinX(), (int)graphics.getClipBounds().getMinY(), (int)graphics.getClipBounds().getMaxX(), (int)graphics.getClipBounds().getMaxY());
+			this.draw(graphics, map, mapViewPort);
 		}
-	}
-	
-	public void setCenterPoint(Point point) {
-		System.out.println("setCenterPoint");
-		this.circleCenterPoint = point;
-		if (graphicsInitialized) {
-			refresh();
-		}
-	}
-
-	private void refresh() {
-		System.out.println("graphicsInitialized");
-		//this.draw(graphics, map, mapViewPort);
-		this.fireMapLayerListenerLayerChanged(MapLayerEvent.DATA_CHANGED);
-		this.fireMapLayerListenerLayerChanged(MapLayerEvent.VISIBILITY_CHANGED);
-		this.fireMapLayerListenerLayerChanged(MapLayerEvent.PRE_DISPOSE);
-		this.fireMapLayerListenerLayerChanged(MapLayerEvent.STYLE_CHANGED);
-		this.fireMapLayerListenerLayerChanged(MapLayerEvent.VISIBILITY_CHANGED);
 	}
 
 }

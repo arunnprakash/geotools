@@ -3,7 +3,6 @@
  */
 package com.crana.qcontroller.ui;
 
-import com.crana.qcontroller.domain.DeviceConfig;
 import com.crana.qcontroller.service.txrx.Transmitter;
 
 /**
@@ -18,6 +17,8 @@ public interface ControllerUI {
 
 	public void logReceivedMessage(String logMessage);
 
-	public void addNeighbourDevice(DeviceConfig deviceConfig);
+	public void updateNeighbourDevice();
+
+	public void updateDevicesLayer();
 
 }

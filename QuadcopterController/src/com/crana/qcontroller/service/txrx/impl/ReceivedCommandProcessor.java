@@ -4,6 +4,7 @@
 package com.crana.qcontroller.service.txrx.impl;
 
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 
 import com.crana.qcontroller.domain.DeviceConfig;
@@ -90,6 +91,17 @@ public class ReceivedCommandProcessor extends Thread {
 	private void processGpsLocationResponse(TxRxMessage message) throws Exception {
 		GpsLocation gpsLocation = objectMapper.readValue(message.getPayload(), GpsLocation.class);
 		calculateDistance(gpsLocation);
+		for (Map.Entry<String, DeviceConfig> deviceEntry : myDeviceConfig.getDevices().entrySet()) {
+			if (deviceEntry.getKey().equalsIgnoreCase(message.getOriginalSender())) {
+				DeviceConfig deviceConfig = deviceEntry.getValue();
+				if (!deviceConfig.equals(gpsLocation)) {
+					deviceConfig.setGpsLocation(gpsLocation);
+					setNeighbourDevice();
+				}
+				break;
+			}
+		}
+		
 	}
 	private void processInviteMessage(TxRxMessage message)
 			throws JsonProcessingException, Exception {
@@ -100,18 +112,12 @@ public class ReceivedCommandProcessor extends Thread {
 		myDeviceConfig.getDevices().put(deviceConfig.getDeviceId(), deviceConfig);
 		calculateDistance(deviceConfig.getGpsLocation());
 		setNeighbourDevice();
-		if (controllerUI != null) {
-			controllerUI.addNeighbourDevice(deviceConfig);
-		}
 	}
 	private void processInviteResponse(TxRxMessage message) throws Exception {
 		DeviceConfig deviceConfig = objectMapper.readValue(message.getPayload(), DeviceConfig.class);
 		myDeviceConfig.getDevices().put(deviceConfig.getDeviceId(), deviceConfig);
 		calculateDistance(deviceConfig.getGpsLocation());
 		setNeighbourDevice();
-		if (controllerUI != null) {
-			controllerUI.addNeighbourDevice(deviceConfig);
-		}
 	}
 	private void setNeighbourDevice() {
 		DeviceConfig myNeigbour = null;
@@ -122,6 +128,10 @@ public class ReceivedCommandProcessor extends Thread {
 			}
 		}
 		myDeviceConfig.setMyNeigbour(myNeigbour);
+		if (controllerUI != null) {
+			controllerUI.updateNeighbourDevice();
+			controllerUI.updateDevicesLayer();
+		}
 	}
 	private void calculateDistance(GpsLocation gpsLocation) {
 		double distance = DistanceCalculator.distance(myDeviceConfig.getGpsLocation().getLatitude(), myDeviceConfig.getGpsLocation().getLongitude(), 

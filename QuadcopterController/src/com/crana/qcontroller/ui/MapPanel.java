@@ -175,4 +175,8 @@ public class MapPanel extends JPanel {
 	public CommandPanel getCommandPanel() {
 		return commandPanel;
 	}
+	public void updateDevicesLayer() {
+		mapLoader.updateDevicesLayer();
+		this.updateUI();
+	}
 }

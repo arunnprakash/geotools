@@ -102,8 +102,8 @@ public class QControllerMainWindow implements ControllerUI {
 	}
 
 	@Override
-	public void addNeighbourDevice(DeviceConfig deviceConfig) {
-		myDeviceConfigPanel.addNeighbourDevice(deviceConfig);
+	public void updateNeighbourDevice() {
+		myDeviceConfigPanel.addNeighbourDevice(myDeviceConfig.getMyNeigbour());
 		mapPanel.getCommandPanel().getQuadCopterPicker().updateQuadCopterList();
 	}
 
@@ -115,5 +115,10 @@ public class QControllerMainWindow implements ControllerUI {
 	@Override
 	public void logReceivedMessage(String logMessage) {
 		txRxLogPanel.getRxMessageLogger().setText(txRxLogPanel.getRxMessageLogger().getText() + logMessage);
+	}
+
+	@Override
+	public void updateDevicesLayer() {
+		mapPanel.updateDevicesLayer();
 	}
 }
