@@ -62,12 +62,12 @@ public class MapLoader extends Thread {
 	}
 	public void updateDevicesLayer() {
 		if (deviceLocationPlotterLayer == null) {
-			deviceLocationPlotterLayer = new DeviceLocationPlotterLayer(20, deviceConfig);
+			deviceLocationPlotterLayer = new DeviceLocationPlotterLayer(16, deviceConfig);
 			mapContent.addLayer(deviceLocationPlotterLayer);
 		} else {
 			//deviceLocationPlotterLayer.updateUI();
 			mapContent.removeLayer(deviceLocationPlotterLayer);
-			deviceLocationPlotterLayer = new DeviceLocationPlotterLayer(20, deviceConfig);
+			deviceLocationPlotterLayer = new DeviceLocationPlotterLayer(16, deviceConfig);
 			mapContent.addLayer(deviceLocationPlotterLayer);
 		}
 	}

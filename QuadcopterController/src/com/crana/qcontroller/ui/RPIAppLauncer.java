@@ -83,28 +83,16 @@ public class RPIAppLauncer extends JFrame {
 			}
 			private void initDynamicGpsThread(final DeviceConfig myDeviceConfig) {
 				Thread thread = new Thread() {
-					@SuppressWarnings("serial")
 					public void run() {
-						Map<Double, Double> latLonMap = new LinkedHashMap<Double, Double>() {{
-							put(12.839686068565335D, 78.81094217995053D);
-							put(12.54401688488115D, 77.42129701663487D);
-							put(11.568308578723343D, 76.6821240574244D);
-							put(10.829135619512883D, 77.18476166968752D);
-							put(9.631675425591936D, 77.40651355745065D);
-							put(10.651734109302373D, 77.87958425134535D);
-						}};
 						try {
-							List<Map.Entry<Double, Double>> listOfCoOridinates = new ArrayList<Map.Entry<Double, Double>>(latLonMap.entrySet());
-							int i = 0;
+							double latitude = myDeviceConfig.getGpsLocation().getLatitude();
+							double longitude = myDeviceConfig.getGpsLocation().getLongitude();
 							while (true) {
-								Thread.sleep(1000L);
-								Map.Entry<Double, Double> entry = listOfCoOridinates.get(i);
-								myDeviceConfig.getGpsLocation().setLatitude(entry.getKey());
-								myDeviceConfig.getGpsLocation().setLongitude(entry.getValue());
-								i++;
-								if (i == listOfCoOridinates.size()) {
-									i = 0;
-								}
+								Thread.sleep(10000L);
+								latitude = latitude + 0.2d;
+								longitude = longitude + 0.018d;
+								myDeviceConfig.getGpsLocation().setLatitude(latitude);
+								myDeviceConfig.getGpsLocation().setLongitude(longitude);
 							}
 						} catch (Exception e) {
 							e.printStackTrace();

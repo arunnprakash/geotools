@@ -66,19 +66,18 @@ public class DeviceLocationPlotterLayer extends DirectLayer {
 		Point device = createCoOridinationPoint(deviceConfig);
 		Point2D worldPoint = new Point2D.Double(device.getX(), device.getY());
 		Point2D screenPoint = worldToScreen.transform(worldPoint, null);
-		Shape theCircle = new Ellipse2D.Double(screenPoint.getX() - diameter/2, screenPoint.getY() - diameter/2, diameter, diameter);
-		graphics.draw(theCircle);
 		if (deviceConfig.getLocomotionType().equals(DeviceLocomotionType.STATIC)){
 			if (deviceConfig.isBaseStation()) {
 				graphics.setColor(Color.GREEN);
 			} else {
-				graphics.setColor(Color.BLUE);
+				graphics.setColor(Color.green);
 			}
 		} else {
 			graphics.setColor(Color.RED);
 		}
-		
-		graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float) .5));
+		Shape theCircle = new Ellipse2D.Double(screenPoint.getX() - diameter/2, screenPoint.getY() - diameter/2, diameter, diameter);
+		graphics.draw(theCircle);
+		//graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float) .5));
 		graphics.fill(theCircle);
 	}
 
