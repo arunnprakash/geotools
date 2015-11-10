@@ -17,6 +17,8 @@ public class DefaultReceiver extends AbstractReceiver {
 
 	private TxRxMessageBoundaryValueBuilder txrxMessageBoundaryValueBuilder;
 	private DeviceConfig myDeviceConfig;
+	private FileInputStream fis;
+	private BufferedReader br;
 	public DefaultReceiver(DeviceConfig myDeviceConfig, Transmitter transmitter) throws Exception {
 		super(myDeviceConfig, transmitter);
 		this.myDeviceConfig = myDeviceConfig;
@@ -32,6 +34,8 @@ public class DefaultReceiver extends AbstractReceiver {
 		} else {
 			file.createNewFile();
 		}
+		fis = new FileInputStream(file);
+		br = new BufferedReader(new InputStreamReader(fis));
 	}
 
 	@Override
@@ -48,14 +52,20 @@ public class DefaultReceiver extends AbstractReceiver {
 	}
 
 	private String readFromFile() throws Exception  {
-		File file = new File(System.getProperty("user.home") + "\\" + myDeviceConfig.getDeviceId() + ".txt");
-		FileInputStream fis = new FileInputStream(file);
-		FileLock lock = fis.getChannel().lock();
-		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-		String lineOfString = br.readLine();
-		lock.release();
-		br.close();
-		fis.close();
-		return lineOfString;
+		return br.readLine();
+	}
+	public void finalize() {
+		if (br != null) {
+			try {
+				br.close();
+				fis.close();
+				File file = new File(System.getProperty("user.home") + "\\" + myDeviceConfig.getDeviceId() + ".txt");
+				if (file.exists()) {
+					file.delete();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

@@ -1,16 +1,12 @@
 package com.crana.qcontroller.rpi.txrx.impl;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.UUID;
 
 import com.crana.qcontroller.domain.DeviceConfig;
@@ -70,14 +66,6 @@ public class DefaultTransmitter extends AbstractTransmitter {
 
 	private void writeToFile(String transmissionMessage, File file)
 			throws FileNotFoundException, IOException {
-		FileChannel channel = new RandomAccessFile(file, "rw").getChannel();
-		FileLock lock = channel.lock();
-		OutputStream fos = new FileOutputStream(file);
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-		bw.write(transmissionMessage + System.lineSeparator());
-		bw.flush();
-		lock.release();
-		bw.close();
-		fos.close();
+		Files.write(Paths.get(file.getAbsolutePath()), (transmissionMessage+ System.lineSeparator()).getBytes(), StandardOpenOption.APPEND);
 	}
 }
