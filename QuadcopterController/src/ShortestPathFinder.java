@@ -1,9 +1,12 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import com.crana.qcontroller.domain.DeviceConfig;
 import com.crana.qcontroller.domain.DeviceLocomotionType;
 import com.crana.qcontroller.domain.GpsLocation;
 import com.crana.qcontroller.service.DistanceCalculator;
+
 
 /**
  * 
@@ -14,34 +17,56 @@ import com.crana.qcontroller.service.DistanceCalculator;
  *
  */
 public class ShortestPathFinder {
+	private DeviceConfig baseStationConfig;
+	private List<DeviceConfig> devices = new ArrayList<DeviceConfig>();
+	private DeviceConfig movingDeviceConfig;
+	public ShortestPathFinder(DeviceConfig baseStationConfig,
+			List<DeviceConfig> devices, DeviceConfig movingDeviceConfig) {
+		super();
+		this.baseStationConfig = baseStationConfig;
+		this.devices = devices;
+		this.movingDeviceConfig = movingDeviceConfig;
+	}
+	
+	public ShortestPathFinder() {
+		initDeviceLocation();
+	}
 
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
-		DeviceConfig baseStation0 = createBaseStation(10d, 70d, "MAIN_BASE_STATION", DeviceLocomotionType.STATIC);
-		DeviceConfig baseStation1 = createBaseStation(9d, 70d, "BASE_STATION_1", DeviceLocomotionType.STATIC);
-		DeviceConfig baseStation2 = createBaseStation(11d, 70d, "BASE_STATION_2", DeviceLocomotionType.STATIC);
-		DeviceConfig baseStation3 = createBaseStation(10d, 70d, "BASE_STATION_3", DeviceLocomotionType.STATIC);
-		DeviceConfig baseStation4 = createBaseStation(10d, 70d, "BASE_STATION_4", DeviceLocomotionType.STATIC);
-		DeviceConfig baseStation5 = createBaseStation(10d, 70d, "BASE_STATION_5", DeviceLocomotionType.STATIC);
-		DeviceConfig baseStation6 = createBaseStation(10d, 70d, "MOVING_DEVICE", DeviceLocomotionType.DYNAMIC);
-		double distance = getDistanceBetweenTwoDevices(baseStation0, baseStation1);
-		System.out.println(distance);
-		distance = getDistanceBetweenTwoDevices(baseStation0, baseStation2);
-		System.out.println(distance);
+	public static void main(String[] args) throws Exception {
+		ShortestPathFinder pathFinder = new ShortestPathFinder();
+		pathFinder.findPath();
 	}
 
+	private void findPath() {
+		// TODO Auto-generated method stub
+		
+	}
 	private static double getDistanceBetweenTwoDevices(DeviceConfig baseStation0, DeviceConfig baseStation1) {
 		double distance = DistanceCalculator.distance(baseStation0.getGpsLocation().getLatitude(), baseStation0.getGpsLocation().getLongitude(), 
 				baseStation1.getGpsLocation().getLatitude(), baseStation1.getGpsLocation().getLongitude(), 8, 8);
 		return distance;
 	}
 
-	private static DeviceConfig createBaseStation(double latitude, double longitude, String deviceName, DeviceLocomotionType locomotionType) {
+	private void initDeviceLocation() {
+		baseStationConfig = createBaseStation(10d, 70d, "MB", DeviceLocomotionType.STATIC, true);
+		devices.add(createBaseStation(9.5d, 70d, "P1", DeviceLocomotionType.STATIC, false));
+		devices.add(createBaseStation(9d, 71d, "P2", DeviceLocomotionType.STATIC, false));
+		devices.add(createBaseStation(10d, 70.5d, "P3", DeviceLocomotionType.STATIC, false));
+		devices.add(createBaseStation(10.5d, 71d, "P4", DeviceLocomotionType.STATIC, false));
+		devices.add(createBaseStation(11d, 70d, "P5", DeviceLocomotionType.STATIC, false));
+		devices.add(createBaseStation(10.5d, 69.8d, "P6", DeviceLocomotionType.STATIC, false));
+		devices.add(createBaseStation(10d, 69d, "P7", DeviceLocomotionType.STATIC, false));
+		devices.add(createBaseStation(9.8d, 69.5d, "P8", DeviceLocomotionType.STATIC, false));
+		movingDeviceConfig = createBaseStation(11d, 69d, "RP", DeviceLocomotionType.DYNAMIC, false);
+	}
+	private static DeviceConfig createBaseStation(final double latitude, final double longitude, String deviceName, DeviceLocomotionType locomotionType, boolean isBaseStation) {
 		DeviceConfig deviceConfig = new DeviceConfig();
-		deviceConfig.setDeviceName("MAIN_BASE_STATION");
+		deviceConfig.setDeviceName(deviceName);
 		deviceConfig.setDeviceId(UUID.randomUUID().toString());
+		deviceConfig.setBaseStation(isBaseStation);
 		deviceConfig.setLocomotionType(locomotionType);
 		deviceConfig.setGpsLocation(new GpsLocation() {{
 			setLatitude(latitude);
@@ -49,5 +74,4 @@ public class ShortestPathFinder {
 		}});
 		return deviceConfig;
 	}
-
 }
