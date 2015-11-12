@@ -107,6 +107,4 @@ public class ShortestPathFinder {
 				baseStation1.getGpsLocation().getLatitude(), baseStation1.getGpsLocation().getLongitude(), 8, 8);
 		return distance;
 	}
-
-
 }

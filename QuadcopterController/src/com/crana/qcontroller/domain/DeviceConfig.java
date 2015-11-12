@@ -34,6 +34,8 @@ public class DeviceConfig implements Serializable {
 	private Map<String, DeviceConfig> devices = new LinkedHashMap<String, DeviceConfig>();
 	@JsonProperty("gpsLoc")
 	private GpsLocation gpsLocation;
+	@JsonIgnore
+	private Path shortestPath;
 	public String getDeviceName() {
 		return deviceName;
 	}
@@ -81,6 +83,12 @@ public class DeviceConfig implements Serializable {
 	}
 	public void setGpsLocation(GpsLocation gpsLocation) {
 		this.gpsLocation = gpsLocation;
+	}
+	public Path getShortestPath() {
+		return shortestPath;
+	}
+	public void setShortestPath(Path shortestPath) {
+		this.shortestPath = shortestPath;
 	}
 	@Override
 	public String toString() {

@@ -41,7 +41,7 @@ public class MapLoader extends Thread {
 	private MapContent mapContent;
 	private StyleFactory sf = CommonFactoryFinder.getStyleFactory();
 	private FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
-	private final String shapeFile = "E:\\NaturalEarthData\\data-v1_2\\data-v1_2\\countries.shp";
+	private final String shapeFile = "C:\\Users\\sn2528\\Downloads\\ne_110m_admin_0_countries\\ne_110m_admin_0_countries.shp";
 	private final String rasterFile = "E:\\NaturalEarthData\\data-v1_2\\data-v1_2\\earthlights.jpg";
 	private DeviceLocationPlotterLayer deviceLocationPlotterLayer;
 	public MapLoader(MapContent mapContent) {
@@ -53,6 +53,7 @@ public class MapLoader extends Thread {
 		try {
 			//initRasterLayer();
 			initShapeLayer();
+			initDevicesLayer();
 		} catch (Exception exp) {
 			exp.printStackTrace();
 		}
@@ -60,16 +61,16 @@ public class MapLoader extends Thread {
 	public void setDeviceConfig(DeviceConfig deviceConfig) {
 		this.deviceConfig = deviceConfig;
 	}
+	private void initDevicesLayer() {
+		deviceLocationPlotterLayer = new DeviceLocationPlotterLayer(16, deviceConfig);
+		mapContent.addLayer(deviceLocationPlotterLayer);
+	}
 	public void updateDevicesLayer() {
-		if (deviceLocationPlotterLayer == null) {
-			deviceLocationPlotterLayer = new DeviceLocationPlotterLayer(16, deviceConfig);
-			mapContent.addLayer(deviceLocationPlotterLayer);
-		} else {
-			//deviceLocationPlotterLayer.updateUI();
-			mapContent.removeLayer(deviceLocationPlotterLayer);
-			deviceLocationPlotterLayer = new DeviceLocationPlotterLayer(16, deviceConfig);
-			mapContent.addLayer(deviceLocationPlotterLayer);
-		}
+		deviceLocationPlotterLayer.preDispose();
+		deviceLocationPlotterLayer.dispose();
+		mapContent.removeLayer(deviceLocationPlotterLayer);
+		deviceLocationPlotterLayer = new DeviceLocationPlotterLayer(16, deviceConfig);
+		mapContent.addLayer(deviceLocationPlotterLayer);
 	}
 	private SimpleFeatureSource initShapeLayer() throws IOException {
 		FileDataStore store = FileDataStoreFinder.getDataStore(new File(shapeFile));

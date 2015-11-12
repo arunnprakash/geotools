@@ -85,13 +85,13 @@ public class MapPanel extends JPanel {
 		
 		final JMapPane mapPane = new JMapPane();
 		final double clickToZoom = 0.1;
-		/*final double minX = 66.28697130720609;
-		final double maxX = 90.11019382452594;
-		final double minY = 30.06536495575221;
-		final double maxY = 4.638656307458902;
+		final double minX = 73.66833095458558;
+		final double maxX = 82.58558511433915;
+		final double minY = 12.732228356070571;
+		final double maxY = 6.4292695925499785;
 		ReferencedEnvelope initialArea = new ReferencedEnvelope(minX, maxX,
 				minY, maxY, mapPane.getDisplayArea().getCoordinateReferenceSystem());
-				mapPane.setDisplayArea(initialArea);*/
+				mapPane.setDisplayArea(initialArea);
 		
 		GridBagConstraints gbc_mapPane = new GridBagConstraints();
 		gbc_mapPane.weighty = 1.0;

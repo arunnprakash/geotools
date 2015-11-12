@@ -59,9 +59,47 @@ public class DeviceLocationPlotterLayer extends DirectLayer {
 			DeviceConfig deviceConfig = deviceEntry.getValue();
 			createCircle(graphics, worldToScreen, deviceConfig);
 		}
+		createLineForMyDevices(graphics, worldToScreen, myDeviceConfig);
+		for (Map.Entry<String, DeviceConfig> deviceEntry : myDeviceConfig.getDevices().entrySet()) {
+			DeviceConfig deviceConfig = deviceEntry.getValue();
+			createLineForMyDevices(graphics, worldToScreen, deviceConfig);
+		}
+		createLineForShortestPath(graphics, worldToScreen);
 		graphicsInitialized = true;
 	}
-
+	private void createLineForShortestPath(Graphics2D graphics,
+			AffineTransform worldToScreen) {
+		graphics.setColor(Color.GREEN);
+		if (myDeviceConfig.getShortestPath() != null && !myDeviceConfig.getShortestPath().getDevices().isEmpty()) {
+			DeviceConfig prevBaseStation = null;
+			for (int i = 0; i < myDeviceConfig.getShortestPath().getDevices().size(); i++) {
+				DeviceConfig currentBaseStation = myDeviceConfig.getShortestPath().getDevices().get(i);
+				if (prevBaseStation != null) {
+					Point device = createCoOridinationPoint(prevBaseStation);
+					Point2D worldPoint = new Point2D.Double(device.getX(), device.getY());
+					Point2D screenPoint = worldToScreen.transform(worldPoint, null);
+					Point nearByDevice = createCoOridinationPoint(currentBaseStation);
+					Point2D nearByDeviceWorldPoint = new Point2D.Double(nearByDevice.getX(), nearByDevice.getY());
+					Point2D nearByDeviceScreenPoint = worldToScreen.transform(nearByDeviceWorldPoint, null);
+					graphics.drawLine((int)screenPoint.getX(), (int)screenPoint.getY(), (int)nearByDeviceScreenPoint.getX(), (int)nearByDeviceScreenPoint.getY());
+				}
+				prevBaseStation = currentBaseStation;
+			}
+		}
+	}
+	private void createLineForMyDevices(Graphics2D graphics2, AffineTransform worldToScreen,
+			DeviceConfig deviceConfig) {
+		Point device = createCoOridinationPoint(deviceConfig);
+		Point2D worldPoint = new Point2D.Double(device.getX(), device.getY());
+		Point2D screenPoint = worldToScreen.transform(worldPoint, null);
+		graphics.setColor(Color.GRAY);
+		for (DeviceConfig nearByDeviceConfig : deviceConfig.getDevices().values()) {
+			Point nearByDevice = createCoOridinationPoint(nearByDeviceConfig);
+			Point2D nearByDeviceWorldPoint = new Point2D.Double(nearByDevice.getX(), nearByDevice.getY());
+			Point2D nearByDeviceScreenPoint = worldToScreen.transform(nearByDeviceWorldPoint, null);
+			graphics.drawLine((int)screenPoint.getX(), (int)screenPoint.getY(), (int)nearByDeviceScreenPoint.getX(), (int)nearByDeviceScreenPoint.getY());
+		}
+	}
 	private void createCircle(Graphics2D graphics, AffineTransform worldToScreen, DeviceConfig deviceConfig) {
 		Point device = createCoOridinationPoint(deviceConfig);
 		Point2D worldPoint = new Point2D.Double(device.getX(), device.getY());
@@ -70,7 +108,7 @@ public class DeviceLocationPlotterLayer extends DirectLayer {
 			if (deviceConfig.isBaseStation()) {
 				graphics.setColor(Color.GREEN);
 			} else {
-				graphics.setColor(Color.green);
+				graphics.setColor(Color.BLUE);
 			}
 		} else {
 			graphics.setColor(Color.RED);
