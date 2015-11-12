@@ -34,7 +34,7 @@ import com.crana.qcontroller.domain.GpsLocation;
 public class ShortestPathFinderUI {
 	private JMapFrame frame;
 	private MapContent mapContent;
-	private final String shapeFile = "C:\\Users\\sn2528\\Downloads\\ne_110m_admin_0_countries\\ne_110m_admin_0_countries.shp";
+	private final String shapeFile = "E:\\NaturalEarthData\\data-v1_2\\data-v1_2\\countries.shp";
 	private DeviceLocationPlotter deviceLocationPlotter;
 	private DeviceConfig baseStationConfig;
 	private DeviceConfig movingDeviceConfig;
@@ -76,6 +76,7 @@ public class ShortestPathFinderUI {
 				deviceLocationPlotter.preDispose();
 				deviceLocationPlotter.dispose();
 				mapContent.removeLayer(deviceLocationPlotter);
+				shortestPathFinder.findPath();
 				deviceLocationPlotter = new DeviceLocationPlotter(baseStationConfig, movingDeviceConfig, devices);
 				mapContent.addLayer(deviceLocationPlotter);
 				frame.getMapPane().updateUI();
@@ -97,15 +98,18 @@ public class ShortestPathFinderUI {
 	private void initDeviceLocation() {
 		baseStationConfig = createBaseStation(10d, 70d, "MB", DeviceLocomotionType.STATIC, true);
 		devices.add(createBaseStation(9.5d, 70d, "P1", DeviceLocomotionType.STATIC, false));
-		devices.add(createBaseStation(9d, 71d, "P2", DeviceLocomotionType.STATIC, false));
+		devices.add(createBaseStation(9.05d, 70.01d, "P2", DeviceLocomotionType.STATIC, false));
 		devices.add(createBaseStation(10d, 70.5d, "P3", DeviceLocomotionType.STATIC, false));
 		devices.add(createBaseStation(10.5d, 71d, "P4", DeviceLocomotionType.STATIC, false));
 		devices.add(createBaseStation(11d, 70d, "P5", DeviceLocomotionType.STATIC, false));
 		devices.add(createBaseStation(10.5d, 69.8d, "P6", DeviceLocomotionType.STATIC, false));
 		devices.add(createBaseStation(10d, 69d, "P7", DeviceLocomotionType.STATIC, false));
 		devices.add(createBaseStation(9.8d, 69.5d, "P8", DeviceLocomotionType.STATIC, false));
+		devices.add(createBaseStation(9.27d, 70.48d, "P9", DeviceLocomotionType.STATIC, false));
+		devices.add(createBaseStation(9.67d, 70.71d, "P10", DeviceLocomotionType.STATIC, false));
 		movingDeviceConfig = createBaseStation(11d, 69d, "RP", DeviceLocomotionType.DYNAMIC, false);
 		shortestPathFinder = new ShortestPathFinder(baseStationConfig, devices, movingDeviceConfig);
+		shortestPathFinder.findPath();
 	}
 
 	private SimpleFeatureSource initShapeLayer() throws IOException {

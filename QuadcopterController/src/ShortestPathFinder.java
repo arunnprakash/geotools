@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.crana.qcontroller.domain.DeviceConfig;
@@ -17,6 +18,7 @@ import com.crana.qcontroller.service.DistanceCalculator;
  *
  */
 public class ShortestPathFinder {
+	private double maxTresholdDistance = 60000d;
 	private DeviceConfig baseStationConfig;
 	private List<DeviceConfig> devices = new ArrayList<DeviceConfig>();
 	private DeviceConfig movingDeviceConfig;
@@ -40,13 +42,47 @@ public class ShortestPathFinder {
 		pathFinder.findPath();
 	}
 
-	private void findPath() {
-		// TODO Auto-generated method stub
-		
+	public void findPath() {
+		setMyDevices();
+		getDistanceBetweenTwoDevices(devices.get(0), devices.get(1));
+		getDistanceBetweenTwoDevices(devices.get(8), devices.get(1));
+		getDistanceBetweenTwoDevices(devices.get(2), devices.get(9));
+		getDistanceBetweenTwoDevices(devices.get(8), devices.get(9));
+		//Map<Double, List<String>> paths = findPath();
 	}
+	private void setMyDevices() {
+		List<DeviceConfig> allDevices = new ArrayList<DeviceConfig>(devices);
+		allDevices.add(baseStationConfig);
+		allDevices.add(movingDeviceConfig);
+		for (DeviceConfig device1 : allDevices) {
+			device1.getDevices().clear();
+			for (DeviceConfig device2 : allDevices) {
+				if (isNotSameDevice(device1, device2)) {
+					double distance = getDistanceBetweenTwoDevices(device1, device2);
+					if (distanceBelongsToThresholdLimit(distance)) {
+						device1.getDevices().put(device2.getDeviceId(), device2);
+					}
+				}
+			}
+			System.out.println(device1.getDeviceName() + ":");
+			for (DeviceConfig device2 : device1.getDevices().values()) {
+				System.out.println(" " + device2.getDeviceName());
+			}
+		}
+	}
+
+	private boolean distanceBelongsToThresholdLimit(double distance) {
+		return distance <= maxTresholdDistance;
+	}
+
+	private boolean isNotSameDevice(DeviceConfig device1, DeviceConfig device2) {
+		return !device1.getDeviceId().equalsIgnoreCase(device2.getDeviceId());
+	}
+
 	private static double getDistanceBetweenTwoDevices(DeviceConfig baseStation0, DeviceConfig baseStation1) {
 		double distance = DistanceCalculator.distance(baseStation0.getGpsLocation().getLatitude(), baseStation0.getGpsLocation().getLongitude(), 
 				baseStation1.getGpsLocation().getLatitude(), baseStation1.getGpsLocation().getLongitude(), 8, 8);
+		System.out.println("Distance Between " + baseStation0.getDeviceName() + " and " + baseStation1.getDeviceName() + "::" + distance);
 		return distance;
 	}
 

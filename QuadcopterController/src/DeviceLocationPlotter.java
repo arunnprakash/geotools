@@ -63,7 +63,27 @@ public class DeviceLocationPlotter extends DirectLayer {
 		for (DeviceConfig deviceConfig : devices) {
 			createCircle(graphics, worldToScreen, deviceConfig);
 		}
+		createLineForMyDevices(graphics, worldToScreen, baseStationConfig);
+		createLineForMyDevices(graphics, worldToScreen, movingDeviceConfig);
+		for (DeviceConfig deviceConfig : devices) {
+			createLineForMyDevices(graphics, worldToScreen, deviceConfig);
+		}
 		graphicsInitialized = true;
+	}
+
+	private void createLineForMyDevices(Graphics2D graphics2, AffineTransform worldToScreen,
+			DeviceConfig deviceConfig) {
+		Point device = createCoOridinationPoint(deviceConfig);
+		Point2D worldPoint = new Point2D.Double(device.getX(), device.getY());
+		Point2D screenPoint = worldToScreen.transform(worldPoint, null);
+		graphics.setColor(Color.GRAY);
+		for (DeviceConfig nearByDeviceConfig : deviceConfig.getDevices().values()) {
+			Point nearByDevice = createCoOridinationPoint(nearByDeviceConfig);
+			Point2D nearByDeviceWorldPoint = new Point2D.Double(nearByDevice.getX(), nearByDevice.getY());
+			Point2D nearByDeviceScreenPoint = worldToScreen.transform(nearByDeviceWorldPoint, null);
+			graphics.drawLine((int)screenPoint.getX(), (int)screenPoint.getY(), (int)nearByDeviceScreenPoint.getX(), (int)nearByDeviceScreenPoint.getY());
+		}
+		
 	}
 
 	private void createCircle(Graphics2D graphics, AffineTransform worldToScreen, DeviceConfig deviceConfig) {
@@ -79,12 +99,12 @@ public class DeviceLocationPlotter extends DirectLayer {
 		} else {
 			graphics.setColor(Color.RED);
 		}
-		Shape theCircle = new Ellipse2D.Double(screenPoint.getX(), screenPoint.getY(), diameter, diameter);
+		Shape theCircle = new Ellipse2D.Double(screenPoint.getX() - diameter/2, screenPoint.getY() - diameter/2, diameter, diameter);
 		graphics.draw(theCircle);
 		//graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float) .5));
 		graphics.fill(theCircle);
-		graphics.setColor(Color.WHITE);
-		graphics.drawString(deviceConfig.getDeviceName(), (float)(screenPoint.getX() + 5), (float)(screenPoint.getY() + 5 + diameter / 2));
+		graphics.setColor(Color.BLACK);
+		graphics.drawString(deviceConfig.getDeviceName(), (float)(screenPoint.getX() + 5 - diameter/2), (float)(screenPoint.getY() + 5));
 	}
 
 	/* (non-Javadoc)
