@@ -1,14 +1,11 @@
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
@@ -18,6 +15,7 @@ import org.geotools.map.MapViewport;
 
 import com.crana.qcontroller.domain.DeviceConfig;
 import com.crana.qcontroller.domain.DeviceLocomotionType;
+import com.crana.qcontroller.domain.Path;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -33,16 +31,18 @@ public class DeviceLocationPlotter extends DirectLayer {
 	private DeviceConfig baseStationConfig;
 	private DeviceConfig movingDeviceConfig;
 	private List<DeviceConfig> devices;
+	private Path shortestPath;
 	
 	private Graphics2D graphics;
 	private MapContent map;
 	private MapViewport mapViewPort;
 
 	public DeviceLocationPlotter(DeviceConfig baseStationConfig,
-			DeviceConfig movingDeviceConfig, List<DeviceConfig> devices) {
+			DeviceConfig movingDeviceConfig, List<DeviceConfig> devices, Path shortestPath) {
 		this.baseStationConfig = baseStationConfig;
 		this.movingDeviceConfig = movingDeviceConfig;
 		this.devices = devices;
+		this.shortestPath = shortestPath;
 	}
 
 	private Point createCoOridinationPoint(DeviceConfig deviceConfig) {
@@ -68,7 +68,29 @@ public class DeviceLocationPlotter extends DirectLayer {
 		for (DeviceConfig deviceConfig : devices) {
 			createLineForMyDevices(graphics, worldToScreen, deviceConfig);
 		}
+		createLineForShortestPath(graphics, worldToScreen);
 		graphicsInitialized = true;
+	}
+
+	private void createLineForShortestPath(Graphics2D graphics,
+			AffineTransform worldToScreen) {
+		graphics.setColor(Color.GREEN);
+		if (shortestPath != null && !shortestPath.getDevices().isEmpty()) {
+			DeviceConfig prevBaseStation = null;
+			for (int i = 0; i < shortestPath.getDevices().size(); i++) {
+				DeviceConfig currentBaseStation = shortestPath.getDevices().get(i);
+				if (prevBaseStation != null) {
+					Point device = createCoOridinationPoint(prevBaseStation);
+					Point2D worldPoint = new Point2D.Double(device.getX(), device.getY());
+					Point2D screenPoint = worldToScreen.transform(worldPoint, null);
+					Point nearByDevice = createCoOridinationPoint(currentBaseStation);
+					Point2D nearByDeviceWorldPoint = new Point2D.Double(nearByDevice.getX(), nearByDevice.getY());
+					Point2D nearByDeviceScreenPoint = worldToScreen.transform(nearByDeviceWorldPoint, null);
+					graphics.drawLine((int)screenPoint.getX(), (int)screenPoint.getY(), (int)nearByDeviceScreenPoint.getX(), (int)nearByDeviceScreenPoint.getY());
+				}
+				prevBaseStation = currentBaseStation;
+			}
+		}
 	}
 
 	private void createLineForMyDevices(Graphics2D graphics2, AffineTransform worldToScreen,
@@ -83,7 +105,6 @@ public class DeviceLocationPlotter extends DirectLayer {
 			Point2D nearByDeviceScreenPoint = worldToScreen.transform(nearByDeviceWorldPoint, null);
 			graphics.drawLine((int)screenPoint.getX(), (int)screenPoint.getY(), (int)nearByDeviceScreenPoint.getX(), (int)nearByDeviceScreenPoint.getY());
 		}
-		
 	}
 
 	private void createCircle(Graphics2D graphics, AffineTransform worldToScreen, DeviceConfig deviceConfig) {
@@ -103,7 +124,7 @@ public class DeviceLocationPlotter extends DirectLayer {
 		graphics.draw(theCircle);
 		//graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float) .5));
 		graphics.fill(theCircle);
-		graphics.setColor(Color.BLACK);
+		graphics.setColor(Color.WHITE);
 		graphics.drawString(deviceConfig.getDeviceName(), (float)(screenPoint.getX() + 5 - diameter/2), (float)(screenPoint.getY() + 5));
 	}
 

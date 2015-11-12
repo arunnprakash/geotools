@@ -22,6 +22,8 @@ import org.geotools.swing.event.MapMouseEvent;
 import com.crana.qcontroller.domain.DeviceConfig;
 import com.crana.qcontroller.domain.DeviceLocomotionType;
 import com.crana.qcontroller.domain.GpsLocation;
+import com.crana.qcontroller.domain.Path;
+import com.crana.qcontroller.service.ShortestPathFinder;
 
 /**
  * 
@@ -34,7 +36,7 @@ import com.crana.qcontroller.domain.GpsLocation;
 public class ShortestPathFinderUI {
 	private JMapFrame frame;
 	private MapContent mapContent;
-	private final String shapeFile = "E:\\NaturalEarthData\\data-v1_2\\data-v1_2\\countries.shp";
+	private final String shapeFile = "C:\\Users\\sn2528\\Downloads\\ne_110m_admin_0_countries\\ne_110m_admin_0_countries.shp";
 	private DeviceLocationPlotter deviceLocationPlotter;
 	private DeviceConfig baseStationConfig;
 	private DeviceConfig movingDeviceConfig;
@@ -76,8 +78,8 @@ public class ShortestPathFinderUI {
 				deviceLocationPlotter.preDispose();
 				deviceLocationPlotter.dispose();
 				mapContent.removeLayer(deviceLocationPlotter);
-				shortestPathFinder.findPath();
-				deviceLocationPlotter = new DeviceLocationPlotter(baseStationConfig, movingDeviceConfig, devices);
+				Path shortestPath = shortestPathFinder.findPath();
+				deviceLocationPlotter = new DeviceLocationPlotter(baseStationConfig, movingDeviceConfig, devices, shortestPath);
 				mapContent.addLayer(deviceLocationPlotter);
 				frame.getMapPane().updateUI();
 			}
@@ -91,7 +93,8 @@ public class ShortestPathFinderUI {
 	}
 	
 	private void initDevicesLayer() {
-		deviceLocationPlotter = new DeviceLocationPlotter(baseStationConfig, movingDeviceConfig, devices);
+		Path shortestPath = shortestPathFinder.findPath();
+		deviceLocationPlotter = new DeviceLocationPlotter(baseStationConfig, movingDeviceConfig, devices, shortestPath);
 		mapContent.addLayer(deviceLocationPlotter);
 	}
 
