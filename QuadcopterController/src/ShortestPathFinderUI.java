@@ -36,7 +36,7 @@ import com.crana.qcontroller.service.ShortestPathFinder;
 public class ShortestPathFinderUI {
 	private JMapFrame frame;
 	private MapContent mapContent;
-	private final String shapeFile = "C:\\Users\\sn2528\\Downloads\\ne_110m_admin_0_countries\\ne_110m_admin_0_countries.shp";
+	private final String shapeFile = "E:\\NaturalEarthData\\data-v1_2\\data-v1_2\\countries.shp";
 	private DeviceLocationPlotter deviceLocationPlotter;
 	private DeviceConfig baseStationConfig;
 	private DeviceConfig movingDeviceConfig;
