@@ -8,6 +8,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<geotools.version>13.2</geotools.version>
 		<jackson.version>2.6.3</jackson.version>
+		<javacsv.version>2.0</javacsv.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -76,6 +77,11 @@
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+        <dependency>
+			<groupId>net.sourceforge.javacsv</groupId>
+			<artifactId>javacsv</artifactId>
+			<version>${javacsv.version}</version>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
