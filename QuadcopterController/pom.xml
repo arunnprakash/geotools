@@ -112,6 +112,7 @@
   <modules>
     <module>metalbird-common</module>
     <module>metalbird-services</module>
+    <module>metalbird-services-impl</module>
     <module>metalbird-basestation</module>
     <module>metalbird-intermediate-basestation</module>
     <module>metalbird-blackmamba</module>
